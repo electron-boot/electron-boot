@@ -1,0 +1,47 @@
+{
+  "name": "@electron-boot/logger",
+  "version": "2.0.4",
+  "description": "fast development framework for electron",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electron-boot/electron-boot.git"
+  },
+  "keywords": [
+    "electron",
+    "bootstrap"
+  ],
+  "author": "electron-boot",
+  "bugs": {
+    "url": "https://github.com/electron-boot/electron-boot/issues"
+  },
+  "homepage": "https://github.com/electron-boot/electron-boot#readme",
+  "license": "MIT",
+  "peerDependencies": {
+    "electron": ">=25.8.0",
+    "tslib": ">=2.6.2",
+    "typescript": ">=5.2.2"
+  },
+  "dependencies": {
+    "logform": "^2.6.0",
+    "winston": "^3.9.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
+  }
+}

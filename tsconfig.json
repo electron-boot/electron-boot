@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "declaration": true,
+    "declarationMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["es2018"],
+    "module": "node16",
+    "noFallthroughCasesInSwitch": true,
+    "pretty": true,
+    "sourceMap": true,
+    "strict": false,
+    "target": "es2018",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "noImplicitThis": false,
+    "noUnusedLocals": true,
+    "stripInternal": true,
+    "noImplicitReturns": false,
+    "noEmitOnError": false,
+    "skipLibCheck": true
+  },
+  "compileOnSave": true,
+  "exclude": [
+    "dist",
+    "node_modules",
+    "test"
+  ]
+}

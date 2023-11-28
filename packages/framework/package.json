@@ -1,0 +1,53 @@
+{
+  "name": "@electron-boot/framework",
+  "version": "2.0.4",
+  "description": "fast development framework for electron",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electron-boot/electron-boot.git"
+  },
+  "keywords": [
+    "electron",
+    "bootstrap"
+  ],
+  "author": "electron-boot",
+  "bugs": {
+    "url": "https://github.com/electron-boot/electron-boot/issues"
+  },
+  "homepage": "https://github.com/electron-boot/electron-boot#readme",
+  "license": "MIT",
+  "peerDependencies": {
+    "electron": ">=25.8.0",
+    "tslib": ">=2.6.2",
+    "typescript": ">=5.2.2"
+  },
+  "dependencies": {
+    "@electron-boot/logger": "workspace:*",
+    "fs-extra": "^11.1.1",
+    "lodash": "^4.17.21",
+    "picomatch": "^2.3.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/lodash": "^4.14.202",
+    "@types/picomatch": "^2.3.0",
+    "electron": "^25.8.0",
+    "rimraf": "^5.0.5"
+  }
+}
