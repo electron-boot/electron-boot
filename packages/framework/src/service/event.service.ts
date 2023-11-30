@@ -1,5 +1,5 @@
 import { Singleton } from '../decorators/definitions.decorator';
-import { kebabCase } from 'lodash';
+import { camelCase } from 'lodash';
 import {
   CONTROLLER_KEY,
   EVENT_KEY,
@@ -65,14 +65,14 @@ export class EventService {
         if (controllerMetadata.customName) {
           controllerName = controllerMetadata.customName;
         } else {
-          controllerName = kebabCase(controllerMetadata.controllerName);
+          controllerName = camelCase(controllerMetadata.controllerName);
         }
 
         let eventName = '';
         if (event.customName) {
           eventName = event.customName;
         } else {
-          eventName = kebabCase(event.eventName);
+          eventName = camelCase(event.eventName);
         }
 
         eventName = [controllerName, eventName].join('/');
