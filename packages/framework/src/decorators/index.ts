@@ -1,5 +1,6 @@
 export * from './autowired.decorator';
 export * from './configuration.decorator';
+export * from './custom.decorator';
 export * from './controller.decorator';
 export * from './decorator.manager';
 export * from './definitions.decorator';
