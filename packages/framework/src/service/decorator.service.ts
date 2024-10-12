@@ -13,7 +13,9 @@ import {
 } from '../interface';
 import { AspectService } from './aspect.service';
 import {
+  ALL,
   APPLICATION_CONTEXT_KEY,
+  CONFIG_KEY,
   getClassMetadata,
   getMethodParamTypes,
   INJECT_CUSTOM_METHOD,
@@ -22,6 +24,7 @@ import {
 } from '../decorators/decorator.manager';
 import { isClass } from '../utils/types.util';
 import { CommonError, ParameterError } from '../error/framework';
+import { ConfigService } from './config.service';
 
 @Singleton()
 export class DecoratorService {
@@ -33,6 +36,9 @@ export class DecoratorService {
 
   @Autowired()
   private aspectService: AspectService;
+
+  @Autowired()
+  private configService: ConfigService;
 
   constructor(readonly applicationContext: IApplicationContext) {}
 
@@ -202,6 +208,17 @@ export class DecoratorService {
         return this.applicationContext;
       }
     );
+
+    // register @Config decorator handler
+    this.registerPropertyHandler(CONFIG_KEY, (propertyName, meta) => {
+      if (meta.identifier === ALL) {
+        return this.configService.getConfiguration();
+      } else {
+        return this.configService.getConfiguration(
+          meta.identifier ?? propertyName
+        );
+      }
+    });
   }
 
   public registerPropertyHandler(decoratorKey: string, fn: HandlerFunction) {

@@ -1,5 +1,11 @@
 # @electron-boot/framework
 
+## 2.0.8
+
+### Patch Changes
+
+- 修复自定义装饰器获取不到数据
+
 ## 2.0.7
 
 ### Patch Changes

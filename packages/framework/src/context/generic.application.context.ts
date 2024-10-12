@@ -299,7 +299,9 @@ export class GenericApplicationContext
 
   onObjectCreated<T>(
     fn: <T>(ins: T, options: ObjectCreatedOptions<T>) => void
-  ): void {}
+  ): void {
+    this.objectCreateEventTarget.on(ObjectLifeCycleEvent.AFTER_CREATED, fn);
+  }
 
   onObjectInit<T>(fn: <T>(ins: T, options: ObjectInitOptions) => void): void {}
 

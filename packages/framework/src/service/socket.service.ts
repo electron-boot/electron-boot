@@ -5,8 +5,6 @@ import { ConfigService } from './config.service';
 import { DecoratorService } from './decorator.service';
 import { IApplicationContext, ISocket } from '../interface';
 import {
-  ALL,
-  CONFIG_KEY,
   getProviderUUId,
   listModule,
   SOCKET_KEY,
@@ -30,20 +28,6 @@ export class SocketService {
   private globalSocketList: Array<ISocket> = [];
   @Init()
   async init() {
-    // register @Config decorator handler
-    this.decoratorService.registerPropertyHandler(
-      CONFIG_KEY,
-      (propertyName, meta) => {
-        if (meta.identifier === ALL) {
-          return this.configService.getConfiguration();
-        } else {
-          return this.configService.getConfiguration(
-            meta.identifier ?? propertyName
-          );
-        }
-      }
-    );
-
     const sockets: Array<new (...args) => any> = listModule(SOCKET_KEY);
     if (sockets.length) {
       for (const socket of sockets) {
