@@ -15,7 +15,7 @@
     "changeset:pro": "changeset pre exit",
     "version-packages": "changeset version",
     "release": "pnpm build:packages && pnpm release:only",
-    "release:only": "changeset publish --registry=https://registry.npmjs.com/"
+    "release:only": "changeset publish --registry=https://registry.npmjs.com/ --access public"
   },
   "keywords": [],
   "author": "",
