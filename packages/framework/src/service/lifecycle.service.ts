@@ -38,7 +38,8 @@ export class LifecycleService {
       // 普通类写法
       this.logger.debug('[core]: Lifecycle init');
       cycle.instance = await this.applicationContext.getAsync<ILifeCycle>(
-        cycle.target
+        cycle.target,
+        [this.applicationContext]
       );
       cycle.instance && lifecycleInstanceList.push(cycle);
     }

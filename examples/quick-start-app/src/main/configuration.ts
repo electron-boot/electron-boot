@@ -1,10 +1,10 @@
 import { Autowired, Configuration, GenericApplicationContext } from '@electron-boot/framework'
 import { MainWindow } from './windows/main.window'
-import { PouchdbConfiguration } from '@electron-boot/pouchdb'
+import * as pouchdb from '@electron-boot/pouchdb'
 import { PouchDBServices } from '@electron-boot/pouchdb'
 
 @Configuration({
-  imports: [{ Configuration: PouchdbConfiguration }]
+  imports: [pouchdb]
 })
 export class MainConfiguration {
   @Autowired()

@@ -1,5 +1,11 @@
 # @electron-boot/framework
 
+## 2.0.9
+
+### Patch Changes
+
+- 1.Configuration类增加构造传参传入appcontext,可实现特殊的类注入，2.pouchdb在配置文件初始化好后通过构造函数初始化
+
 ## 2.0.8
 
 ### Patch Changes

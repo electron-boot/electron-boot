@@ -7,6 +7,7 @@ export interface MainWindowOptions extends BrowserWindowConstructorOptions {}
 @Singleton()
 export class MainWindow extends AbstractWindow {
   protected logger: ILogger = LoggerFactory.getLogger()
+
   @Init()
   async init() {
     this._win = new BrowserWindow({

@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -30,7 +30,7 @@
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
   "peerDependencies": {
-    "@electron-boot/framework": "^2.0.8",
+    "@electron-boot/framework": "^2.0.9",
     "pouchdb": "^9.0.0"
   },
   "dependencies": {
