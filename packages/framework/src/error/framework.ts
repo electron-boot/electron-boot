@@ -1,6 +1,7 @@
-import { BasicError, registerErrorCode } from './base';
-import { ObjectIdentifier } from '../interface';
-export const FrameworkErrorEnum = registerErrorCode('framework', {
+import { BasicError, registerErrorCode } from "./base";
+import type { ObjectIdentifier } from "../interface";
+
+export const FrameworkErrorEnum = registerErrorCode("framework", {
   UNKNOWN: 10000,
   COMMON: 10001,
   PARAM_TYPE: 10002,
@@ -38,7 +39,7 @@ export class ResolverMissingError extends BasicError {
   constructor(type: string) {
     super(
       `Resolver "${type}" is missing.`,
-      FrameworkErrorEnum.MISSING_RESOLVER
+      FrameworkErrorEnum.MISSING_RESOLVER,
     );
   }
 }
@@ -50,14 +51,14 @@ export class SingletonInjectRequestError extends BasicError {
 }
 export class ParameterError extends BasicError {
   constructor(message?: string) {
-    super(message ?? 'Parameter type not match', FrameworkErrorEnum.PARAM_TYPE);
+    super(message ?? "Parameter type not match", FrameworkErrorEnum.PARAM_TYPE);
   }
 }
 export class UseWrongMethodError extends BasicError {
   constructor(
     wrongMethod: string,
     replacedMethod: string,
-    describeKey?: string
+    describeKey?: string,
   ) {
     const text = describeKey
       ? `${describeKey} not valid by ${wrongMethod}, Use ${replacedMethod} instead!`
@@ -69,8 +70,8 @@ export class UseWrongMethodError extends BasicError {
 export class InvalidConfigError extends BasicError {
   constructor(message?: string) {
     super(
-      'Invalid config file \n' + message,
-      FrameworkErrorEnum.INVALID_CONFIG
+      "Invalid config file \n" + message,
+      FrameworkErrorEnum.INVALID_CONFIG,
     );
   }
 }
@@ -78,27 +79,28 @@ export class DuplicateEventError extends BasicError {
   constructor(routerUrl: string, existPos: string, existPosOther: string) {
     super(
       `Duplicate router "${routerUrl}" at "${existPos}" and "${existPosOther}"`,
-      FrameworkErrorEnum.DUPLICATE_ROUTER
+      FrameworkErrorEnum.DUPLICATE_ROUTER,
     );
   }
 }
 export class DefinitionNotFoundError extends BasicError {
-  static readonly type = Symbol.for('#NotFoundError');
+  static readonly type = Symbol.for("#NotFoundError");
   static isClosePrototypeOf(ins: DefinitionNotFoundError): boolean {
-    return ins
-      ? ins[DefinitionNotFoundError.type] === DefinitionNotFoundError.type
-      : false;
+    if (ins) {
+      return ins[DefinitionNotFoundError.type] === DefinitionNotFoundError.type;
+    }
+    return false;
   }
   constructor(identifier: ObjectIdentifier) {
     super(
-      `${identifier} is not valid in current context`,
-      FrameworkErrorEnum.DEFINITION_NOT_FOUND
+      `${typeof identifier === "undefined" ? "" : identifier.toString()} is not valid in current context`,
+      FrameworkErrorEnum.DEFINITION_NOT_FOUND,
     );
     this[DefinitionNotFoundError.type] = DefinitionNotFoundError.type;
   }
   updateErrorMsg(className: string): void {
     const identifier = this.message.split(
-      ' is not valid in current context'
+      " is not valid in current context",
     )[0];
     this.message = `${identifier} in class ${className} is not valid in current context`;
   }

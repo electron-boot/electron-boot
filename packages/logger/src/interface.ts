@@ -1,23 +1,23 @@
-import { transport as Transport, Logform } from 'winston';
+import type { Logform, transport as Transport } from "winston";
 
 export type Level =
-  | 'all'
-  | 'trace'
-  | 'debug'
-  | 'info'
-  | 'warn'
-  | 'error'
-  | 'none'
-  | 'ALL'
-  | 'TRACE'
-  | 'DEBUG'
-  | 'INFO'
-  | 'WARN'
-  | 'ERROR'
-  | 'NONE';
+  | "all"
+  | "trace"
+  | "debug"
+  | "info"
+  | "warn"
+  | "error"
+  | "none"
+  | "ALL"
+  | "TRACE"
+  | "DEBUG"
+  | "INFO"
+  | "WARN"
+  | "ERROR"
+  | "NONE";
 export type LoggerContextFormat = (
   info: LoggerTransformableInfo,
-  logger?: IGenericLogger
+  logger?: IGenericLogger,
 ) => string;
 export interface LoggerTransformableInfo {
   [key: string]: any;
@@ -36,20 +36,20 @@ export interface LoggerTransformableInfo {
 }
 
 export type LoggerCustomInfoHandler = (
-  info: LoggerTransformableInfo
+  info: LoggerTransformableInfo,
 ) => LoggerTransformableInfo;
 
 export interface LoggerOptions {
   // 当前日志的label
-  name: string;
+  name?: string;
   // 当前日志输出的等级
-  level: Level;
+  level?: Level;
   // 是否在使用时再创建
   lazyLoad?: boolean;
   // 其他元数据
-  metadata: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   // 要使用的Transport
-  transportRef: Array<'Console' | 'File' | 'RotateFile'>;
+  transportRef?: Array<"Console" | "File" | "RotateFile">;
 }
 export interface ILogger {
   isDebugEnabled(): boolean;
@@ -69,7 +69,8 @@ export type ContextLoggerOptions = LoggerOptions;
 
 export interface IGenericLogger extends ILogger {
   metadata: Record<string, unknown> | undefined;
-  level: Level;
+  setLevel(level: Level): void;
+  getLevel(): Level;
   write(...args: any[]): boolean;
   add(transport: Transport): void;
   remove(transport: Transport): void;
@@ -80,7 +81,7 @@ export interface IGenericLogger extends ILogger {
 
 export interface IGenericChildLogger
   extends ILogger,
-    Pick<IGenericLogger, 'write' | 'createContextLogger'> {
+    Pick<IGenericLogger, "write" | "createContextLogger"> {
   getParentLogger(): IGenericLogger;
   getLoggerOptions(): ChildLoggerOptions;
 }
@@ -98,7 +99,7 @@ export interface LoggerProperties {
 export type ColorizeOptions = Logform.ColorizeOptions;
 export interface ConsoleAppenderOptions {
   // 当前输出的类型
-  type: 'Console';
+  type: "Console";
   // 是否给输出添加颜色
   colorize?: boolean | ColorizeOptions;
   // 日志样式
@@ -110,7 +111,7 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface FileAppenderOptions {
   // 文件类型
-  type: 'File';
+  type: "File";
   // pattern template
   pattern?: string;
   // 日志样式
@@ -119,7 +120,7 @@ export interface FileAppenderOptions {
 
 export interface RotateFileAppenderOptions {
   // 文件类型
-  type: 'RotateFile';
+  type: "RotateFile";
   // 日志样式
   format?: LoggerContextFormat;
   // 格式化
@@ -132,6 +133,8 @@ export type LoggerTransportOptions =
   | RotateFileAppenderOptions;
 
 export interface LoggerFactoryConfig {
+  // 全局参数
+  global?: LoggerOptions;
   // 公共属性
   properties?: LoggerProperties;
   // 输出的接口

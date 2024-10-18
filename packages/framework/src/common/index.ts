@@ -1,1 +1,1 @@
-export * from './abstract.window';
+export * from "./abstract.window";

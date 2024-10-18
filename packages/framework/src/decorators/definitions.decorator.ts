@@ -1,6 +1,7 @@
-import { saveObjectDefinition } from './decorator.manager';
-import { ObjectIdentifier, ScopeEnum as ScopeEnum } from '../interface';
-import { Provide } from './provide.decorator';
+import { saveObjectDefinition } from "./decorator.manager";
+import type { ObjectIdentifier } from "../interface";
+import { ScopeEnum as ScopeEnum } from "../interface";
+import { Provide } from "./provide.decorator";
 
 export function Init(): MethodDecorator {
   return function (target: any, propertyKey: string | symbol) {
@@ -18,7 +19,7 @@ export function Destroy(): MethodDecorator {
 
 export function Scope(
   scope: ScopeEnum,
-  scopeOptions?: { allowDowngrade?: boolean }
+  scopeOptions?: { allowDowngrade?: boolean },
 ): ClassDecorator {
   return function (target: any): void {
     saveObjectDefinition(target, { scope, ...scopeOptions });

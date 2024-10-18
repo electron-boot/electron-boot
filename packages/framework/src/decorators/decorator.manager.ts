@@ -1,43 +1,44 @@
-import {
-  ObjectIdentifier,
-  IModuleStore,
+import type {
   GroupModeType,
-  InjectMode,
-  TSDesignType,
-  TagClsMetadata,
+  IModuleStore,
   MethodDecoratorOptions,
-  ParamDecoratorOptions,
   ObjectDefinitionOptions,
+  ObjectIdentifier,
+  ParamDecoratorOptions,
+  TagClsMetadata,
   TagPropsMetadata,
-} from '../interface';
-import { getModuleRequirePathList } from '../utils/path.util';
-import 'reflect-metadata';
-import { generateRandomId } from '../utils/string.util';
-import { isClass, isNullOrUndefined } from '../utils/types.util';
-import { merge } from '../utils/object.util';
-import { camelCase } from 'lodash';
-export const ALL = 'common:all_value_key';
+  TSDesignType,
+} from "../interface";
+import { InjectMode } from "../interface";
+import { getModuleRequirePathList } from "../utils/path.util";
+import "reflect-metadata";
+import { generateRandomId } from "../utils/string.util";
+import { isClass, isNullOrUndefined } from "../utils/types.util";
+import { merge } from "../utils/object.util";
+import { camel } from "radash";
+
+export const ALL = "common:all_value_key";
 // common
-export const ASPECT_KEY = 'common:aspect';
-export const CONFIGURATION_KEY = 'common:configuration';
-export const SOCKET_KEY = 'common:socket';
-export const CONTROLLER_KEY = 'common:controller';
-export const EVENT_KEY = 'common:event';
-export const CONFIG_KEY = 'config';
-export const APPLICATION_CONTEXT_KEY = '__application_context__';
-export const PRELOAD_MODULE_KEY = 'INJECTION_PRELOAD_MODULE_KEY';
-export const INJECT_CLASS_KEY_PREFIX = 'INJECTION_CLASS_META_DATA';
-export const TAGGED_CLS = 'injection:tagged_class';
-export const INJECT_TAG = 'inject';
-export const OBJ_DEF_CLS = 'injection:object_definition_class';
+export const ASPECT_KEY = "common:aspect";
+export const CONFIGURATION_KEY = "common:configuration";
+export const SOCKET_KEY = "common:socket";
+export const CONTROLLER_KEY = "common:controller";
+export const EVENT_KEY = "common:event";
+export const CONFIG_KEY = "config";
+export const APPLICATION_CONTEXT_KEY = "__application_context__";
+export const PRELOAD_MODULE_KEY = "INJECTION_PRELOAD_MODULE_KEY";
+export const INJECT_CLASS_KEY_PREFIX = "INJECTION_CLASS_META_DATA";
+export const TAGGED_CLS = "injection:tagged_class";
+export const INJECT_TAG = "inject";
+export const OBJ_DEF_CLS = "injection:object_definition_class";
 // pipeline
-export const PIPELINE_IDENTIFIER = '__pipeline_identifier__';
-export const INJECT_CUSTOM_PROPERTY = 'inject_custom_property';
+export const PIPELINE_IDENTIFIER = "__pipeline_identifier__";
+export const INJECT_CUSTOM_PROPERTY = "inject_custom_property";
 // The name inject custom param decorator with resolver
-export const INJECT_CUSTOM_METHOD = 'inject_custom_method';
+export const INJECT_CUSTOM_METHOD = "inject_custom_method";
 // The name inject custom param decorator with resolver
-export const INJECT_CUSTOM_PARAM = 'inject_custom_param';
-export const MAIN_MODULE_KEY = '__main__';
+export const INJECT_CUSTOM_PARAM = "inject_custom_param";
+export const MAIN_MODULE_KEY = "__main__";
 export class DecoratorManager extends Map implements IModuleStore {
   /**
    * the key for meta data store in class
@@ -46,16 +47,16 @@ export class DecoratorManager extends Map implements IModuleStore {
   /**
    * the key for method meta data store in class
    */
-  injectClassMethodKeyPrefix = 'INJECTION_CLASS_METHOD_META_DATA';
+  injectClassMethodKeyPrefix = "INJECTION_CLASS_METHOD_META_DATA";
 
   /**
    * the key for method meta data store in method
    */
-  injectMethodKeyPrefix = 'INJECTION_METHOD_META_DATA';
+  injectMethodKeyPrefix = "INJECTION_METHOD_META_DATA";
 
   container: IModuleStore | undefined;
 
-  saveModule(key: ObjectIdentifier, module: any) {
+  saveModule(key: ObjectIdentifier, module: any): void {
     if (this.container) {
       return this.container.saveModule(key, module);
     }
@@ -65,61 +66,67 @@ export class DecoratorManager extends Map implements IModuleStore {
     this.get(key).add(module);
   }
 
-  listModule(key: ObjectIdentifier) {
+  listModule(key: ObjectIdentifier): any[] {
     if (this.container) {
       return this.container.listModule(key);
     }
     return Array.from(this.get(key) || {});
   }
 
-  resetModule(key: ObjectIdentifier) {
+  resetModule(key: ObjectIdentifier): void {
     this.set(key, new Set());
   }
 
-  bindContainer(container: IModuleStore) {
+  bindContainer(container: IModuleStore): void {
     this.container = container;
     this.container.transformModule && this.container.transformModule(this);
   }
 
-  static getDecoratorClassKey(decoratorNameKey: ObjectIdentifier) {
-    return decoratorNameKey.toString() + '_CLS';
+  static getDecoratorClassKey(decoratorNameKey: ObjectIdentifier): string {
+    return decoratorNameKey!.toString() + "_CLS";
   }
 
-  static removeDecoratorClassKeySuffix(decoratorNameKey: ObjectIdentifier) {
-    return decoratorNameKey.toString().replace('_CLS', '');
+  static removeDecoratorClassKeySuffix(
+    decoratorNameKey: ObjectIdentifier,
+  ): string {
+    return decoratorNameKey!.toString().replace("_CLS", "");
   }
 
-  static getDecoratorMethodKey(decoratorNameKey: ObjectIdentifier) {
-    return decoratorNameKey.toString() + '_METHOD';
+  static getDecoratorMethodKey(decoratorNameKey: ObjectIdentifier): string {
+    return decoratorNameKey!.toString() + "_METHOD";
   }
 
-  static getDecoratorClsExtendedKey(decoratorNameKey: ObjectIdentifier) {
-    return decoratorNameKey.toString() + '_EXT';
+  static getDecoratorClsExtendedKey(
+    decoratorNameKey: ObjectIdentifier,
+  ): string {
+    return decoratorNameKey!.toString() + "_EXT";
   }
 
-  static getDecoratorClsMethodPrefix(decoratorNameKey: ObjectIdentifier) {
-    return decoratorNameKey.toString() + '_CLS_METHOD';
+  static getDecoratorClsMethodPrefix(
+    decoratorNameKey: ObjectIdentifier,
+  ): string {
+    return decoratorNameKey!.toString() + "_CLS_METHOD";
   }
 
   static getDecoratorClsMethodKey(
     decoratorNameKey: ObjectIdentifier,
-    methodKey: ObjectIdentifier
-  ) {
+    methodKey: ObjectIdentifier,
+  ): string {
     return (
       DecoratorManager.getDecoratorClsMethodPrefix(decoratorNameKey) +
-      ':' +
-      methodKey.toString()
+      ":" +
+      methodKey!.toString()
     );
   }
 
   static getDecoratorMethod(
     decoratorNameKey: ObjectIdentifier,
-    methodKey: ObjectIdentifier
-  ) {
+    methodKey: ObjectIdentifier,
+  ): string {
     return (
       DecoratorManager.getDecoratorMethodKey(decoratorNameKey) +
-      '_' +
-      methodKey.toString()
+      "_" +
+      methodKey!.toString()
     );
   }
 
@@ -127,10 +134,10 @@ export class DecoratorManager extends Map implements IModuleStore {
     metaKey: string,
     target: any,
     dataKey: string,
-    data: any
-  ) {
+    data: any,
+  ): void {
     // filter Object.create(null)
-    if (typeof target === 'object' && target.constructor) {
+    if (typeof target === "object" && target.constructor) {
       target = target.constructor;
     }
 
@@ -151,10 +158,10 @@ export class DecoratorManager extends Map implements IModuleStore {
     dataKey: string,
     data: any,
     groupBy?: string | symbol,
-    groupMode: GroupModeType = 'one'
-  ) {
+    groupMode: GroupModeType = "one",
+  ): void {
     // filter Object.create(null)
-    if (typeof target === 'object' && target.constructor) {
+    if (typeof target === "object" && target.constructor) {
       target = target.constructor;
     }
 
@@ -173,7 +180,7 @@ export class DecoratorManager extends Map implements IModuleStore {
       }
     }
     if (groupBy) {
-      if (groupMode === 'one') {
+      if (groupMode === "one") {
         m.get(dataKey)[groupBy] = data;
       } else {
         if (m.get(dataKey)[groupBy]) {
@@ -188,9 +195,9 @@ export class DecoratorManager extends Map implements IModuleStore {
     Reflect.defineMetadata(metaKey, m, target);
   }
 
-  static getMetadata(metaKey: string, target: any, dataKey?: string) {
+  static getMetadata(metaKey: string, target: any, dataKey?: string): any {
     // filter Object.create(null)
-    if (typeof target === 'object' && target.constructor) {
+    if (typeof target === "object" && target.constructor) {
       target = target.constructor;
     }
 
@@ -218,18 +225,18 @@ export class DecoratorManager extends Map implements IModuleStore {
     decoratorNameKey: ObjectIdentifier,
     data: any,
     target: any,
-    propertyName?: string | symbol
-  ) {
+    propertyName?: string | symbol,
+  ): void {
     if (propertyName) {
       const dataKey = DecoratorManager.getDecoratorMethod(
         decoratorNameKey,
-        propertyName
+        propertyName,
       );
       DecoratorManager.saveMetadata(
         this.injectMethodKeyPrefix,
         target,
         dataKey,
-        data
+        data,
       );
     } else {
       const dataKey = DecoratorManager.getDecoratorClassKey(decoratorNameKey);
@@ -237,7 +244,7 @@ export class DecoratorManager extends Map implements IModuleStore {
         this.injectClassKeyPrefix,
         target,
         dataKey,
-        data
+        data,
       );
     }
   }
@@ -256,12 +263,12 @@ export class DecoratorManager extends Map implements IModuleStore {
     target: any,
     propertyName?: string | symbol,
     groupBy?: string | symbol,
-    groupMode?: GroupModeType
-  ) {
+    groupMode?: GroupModeType,
+  ): void {
     if (propertyName) {
       const dataKey = DecoratorManager.getDecoratorMethod(
         decoratorNameKey,
-        propertyName
+        propertyName,
       );
       DecoratorManager.attachMetadata(
         this.injectMethodKeyPrefix,
@@ -269,7 +276,7 @@ export class DecoratorManager extends Map implements IModuleStore {
         dataKey,
         data,
         groupBy,
-        groupMode
+        groupMode,
       );
     } else {
       const dataKey = DecoratorManager.getDecoratorClassKey(decoratorNameKey);
@@ -279,7 +286,7 @@ export class DecoratorManager extends Map implements IModuleStore {
         dataKey,
         data,
         groupBy,
-        groupMode
+        groupMode,
       );
     }
   }
@@ -293,26 +300,26 @@ export class DecoratorManager extends Map implements IModuleStore {
   getMetadata(
     decoratorNameKey: ObjectIdentifier,
     target: any,
-    propertyName?: string | symbol
-  ) {
+    propertyName?: string | symbol,
+  ): any {
     if (propertyName) {
       const dataKey = DecoratorManager.getDecoratorMethod(
         decoratorNameKey,
-        propertyName
+        propertyName,
       );
       return DecoratorManager.getMetadata(
         this.injectMethodKeyPrefix,
         target,
-        dataKey
+        dataKey,
       );
     } else {
       const dataKey = `${DecoratorManager.getDecoratorClassKey(
-        decoratorNameKey
+        decoratorNameKey,
       )}`;
       return DecoratorManager.getMetadata(
         this.injectClassKeyPrefix,
         target,
-        dataKey
+        dataKey,
       );
     }
   }
@@ -328,17 +335,17 @@ export class DecoratorManager extends Map implements IModuleStore {
     decoratorNameKey: ObjectIdentifier,
     data: any,
     target: any,
-    propertyName: string | symbol
-  ) {
+    propertyName: string | symbol,
+  ): void {
     const dataKey = DecoratorManager.getDecoratorClsMethodKey(
       decoratorNameKey,
-      propertyName
+      propertyName,
     );
     DecoratorManager.saveMetadata(
       this.injectClassMethodKeyPrefix,
       target,
       dataKey,
-      data
+      data,
     );
   }
 
@@ -355,18 +362,18 @@ export class DecoratorManager extends Map implements IModuleStore {
     data: any,
     target: any,
     propertyName: string | symbol,
-    groupBy?: string
-  ) {
+    groupBy?: string,
+  ): void {
     const dataKey = DecoratorManager.getDecoratorClsMethodKey(
       decoratorNameKey,
-      propertyName
+      propertyName,
     );
     DecoratorManager.attachMetadata(
       this.injectClassMethodKeyPrefix,
       target,
       dataKey,
       data,
-      groupBy
+      groupBy,
     );
   }
 
@@ -379,16 +386,16 @@ export class DecoratorManager extends Map implements IModuleStore {
   getPropertyDataFromClass(
     decoratorNameKey: ObjectIdentifier,
     target: any,
-    propertyName: string | symbol
-  ) {
+    propertyName: string | symbol,
+  ): any {
     const dataKey = DecoratorManager.getDecoratorClsMethodKey(
       decoratorNameKey,
-      propertyName
+      propertyName,
     );
     return DecoratorManager.getMetadata(
       this.injectClassMethodKeyPrefix,
       target,
-      dataKey
+      dataKey,
     );
   }
 
@@ -397,16 +404,19 @@ export class DecoratorManager extends Map implements IModuleStore {
    * @param decoratorNameKey
    * @param target
    */
-  listPropertyDataFromClass(decoratorNameKey: ObjectIdentifier, target: any) {
+  listPropertyDataFromClass(
+    decoratorNameKey: ObjectIdentifier,
+    target: any,
+  ): any[] {
     const originMap = DecoratorManager.getMetadata(
       this.injectClassMethodKeyPrefix,
-      target
+      target,
     );
-    const res = [];
+    const res: any[] = [];
     for (const [key, value] of originMap) {
       if (
         key.indexOf(
-          DecoratorManager.getDecoratorClsMethodPrefix(decoratorNameKey)
+          DecoratorManager.getDecoratorClsMethodPrefix(decoratorNameKey),
         ) !== -1
       ) {
         res.push(value);
@@ -415,27 +425,25 @@ export class DecoratorManager extends Map implements IModuleStore {
     return res;
   }
 }
-declare global {
-  var DecoratorManager: DecoratorManager;
-}
+
 let manager = new DecoratorManager();
-if (typeof global === 'object') {
-  if (global['DecoratorManager']) {
+if (typeof global === "object") {
+  if (global["ELECTRON_APPLICATION_DECORATOR_MANAGER"]) {
     console.warn(
-      'DecoratorManager not singleton and please check @electron-boot/framework version by "npm ls @electron-boot/framework"'
+      'DecoratorManager not singleton and please check @electron-boot/framework version by "npm ls @electron-boot/framework"',
     );
     const coreModulePathList = getModuleRequirePathList(
-      '@electron-boot/framework'
+      "@electron-boot/framework",
     );
     if (coreModulePathList.length) {
-      console.info('The module may be located in:');
+      console.info("The module may be located in:");
       coreModulePathList.forEach((path: string, index: number) => {
         console.info(`${index + 1}. ${path}`);
       });
     }
-    manager = global['DecoratorManager'];
+    manager = global["ELECTRON_APPLICATION_DECORATOR_MANAGER"];
   } else {
-    global['DecoratorManager'] = manager;
+    global["ELECTRON_APPLICATION_DECORATOR_MANAGER"] = manager;
   }
 }
 
@@ -451,15 +459,15 @@ export function attachClassMetadata(
   data: any,
   target: any,
   groupBy?: string | symbol,
-  groupMode?: GroupModeType
-) {
+  groupMode?: GroupModeType,
+): void {
   return manager.attachMetadata(
     decoratorNameKey,
     data,
     target,
     undefined,
     groupBy,
-    groupMode
+    groupMode,
   );
 }
 
@@ -474,9 +482,9 @@ export function saveClassMetadata(
   decoratorNameKey: ObjectIdentifier,
   data: any,
   target: any,
-  mergeIfExist?: boolean
-) {
-  if (mergeIfExist && typeof data === 'object') {
+  mergeIfExist?: boolean,
+): void {
+  if (mergeIfExist && typeof data === "object") {
     const originData = manager.getMetadata(decoratorNameKey, target);
     if (!originData) {
       return manager.saveMetadata(decoratorNameKey, data, target);
@@ -485,13 +493,13 @@ export function saveClassMetadata(
       return manager.saveMetadata(
         decoratorNameKey,
         originData.concat(data),
-        target
+        target,
       );
     } else {
       return manager.saveMetadata(
         decoratorNameKey,
         Object.assign(originData, data),
-        target
+        target,
       );
     }
   } else {
@@ -506,7 +514,7 @@ export function saveClassMetadata(
  */
 export function getClassMetadata<T = any>(
   decoratorNameKey: ObjectIdentifier,
-  target: any
+  target: any,
 ): T {
   return manager.getMetadata(decoratorNameKey, target);
 }
@@ -520,15 +528,15 @@ export function getClassMetadata<T = any>(
  */
 export function savePropertyDataToClass(
   decoratorNameKey: ObjectIdentifier,
-  data,
-  target,
-  propertyName
-) {
+  data: any,
+  target: any,
+  propertyName: any,
+): void {
   return manager.savePropertyDataToClass(
     decoratorNameKey,
     data,
     target,
-    propertyName
+    propertyName,
   );
 }
 
@@ -542,17 +550,17 @@ export function savePropertyDataToClass(
  */
 export function attachPropertyDataToClass(
   decoratorNameKey: ObjectIdentifier,
-  data,
-  target,
-  propertyName,
-  groupBy?: string
-) {
+  data: any,
+  target: any,
+  propertyName: any,
+  groupBy?: string,
+): void {
   return manager.attachPropertyDataToClass(
     decoratorNameKey,
     data,
     target,
     propertyName,
-    groupBy
+    groupBy,
   );
 }
 
@@ -564,13 +572,13 @@ export function attachPropertyDataToClass(
  */
 export function getPropertyDataFromClass<T = any>(
   decoratorNameKey: ObjectIdentifier,
-  target,
-  propertyName
+  target: any,
+  propertyName: any,
 ): T {
   return manager.getPropertyDataFromClass(
     decoratorNameKey,
     target,
-    propertyName
+    propertyName,
   );
 }
 
@@ -581,8 +589,8 @@ export function getPropertyDataFromClass<T = any>(
  */
 export function listPropertyDataFromClass(
   decoratorNameKey: ObjectIdentifier,
-  target
-) {
+  target: any,
+): any[] {
   return manager.listPropertyDataFromClass(decoratorNameKey, target);
 }
 
@@ -595,10 +603,10 @@ export function listPropertyDataFromClass(
  */
 export function savePropertyMetadata(
   decoratorNameKey: ObjectIdentifier,
-  data,
-  target,
-  propertyName
-) {
+  data: any,
+  target: any,
+  propertyName: any,
+): void {
   return manager.saveMetadata(decoratorNameKey, data, target, propertyName);
 }
 
@@ -611,10 +619,10 @@ export function savePropertyMetadata(
  */
 export function attachPropertyMetadata(
   decoratorNameKey: ObjectIdentifier,
-  data,
-  target,
-  propertyName
-) {
+  data: any,
+  target: any,
+  propertyName: any,
+): void {
   return manager.attachMetadata(decoratorNameKey, data, target, propertyName);
 }
 
@@ -626,8 +634,8 @@ export function attachPropertyMetadata(
  */
 export function getPropertyMetadata<T = any>(
   decoratorNameKey: ObjectIdentifier,
-  target,
-  propertyName
+  target: any,
+  propertyName: any,
 ): T {
   return manager.getMetadata(decoratorNameKey, target, propertyName);
 }
@@ -636,7 +644,7 @@ export function getPropertyMetadata<T = any>(
  * save preload module by target
  * @param target
  */
-export function savePreloadModule(target) {
+export function savePreloadModule(target: any): void {
   return saveModule(PRELOAD_MODULE_KEY, target);
 }
 
@@ -652,19 +660,22 @@ export function listPreloadModule(): any[] {
  * @param decoratorNameKey
  * @param target
  */
-export function saveModule(decoratorNameKey: ObjectIdentifier, target) {
+export function saveModule(
+  decoratorNameKey: ObjectIdentifier,
+  target: any,
+): void {
   if (isClass(target)) {
     saveProviderId(undefined, target);
   }
   return manager.saveModule(decoratorNameKey, target);
 }
 
-export function bindContainer(container) {
+export function bindContainer(container: IModuleStore): void {
   return manager.bindContainer(container);
 }
 
-export function clearBindContainer() {
-  return (manager.container = null);
+export function clearBindContainer(): void {
+  return (manager.container = undefined);
 }
 
 /**
@@ -674,7 +685,7 @@ export function clearBindContainer() {
  */
 export function listModule(
   decoratorNameKey: ObjectIdentifier,
-  filter?: (module) => boolean
+  filter?: (module) => boolean,
 ): any[] {
   const modules = manager.listModule(decoratorNameKey);
   if (filter) {
@@ -697,7 +708,7 @@ export function resetModule(decoratorNameKey: ObjectIdentifier): void {
  * @param target class
  * @param props property data
  */
-export function saveObjectDefinition(target: any, props = {}) {
+export function saveObjectDefinition(target: any, props = {}): any {
   saveClassMetadata(OBJ_DEF_CLS, props, target, true);
   return target;
 }
@@ -717,7 +728,7 @@ export function getObjectDefinition(target: any): ObjectDefinitionOptions {
  */
 export function getPropertyInject(
   target: any,
-  useCache?: boolean
+  useCache?: boolean,
 ): {
   [methodName: string]: TagPropsMetadata;
 } {
@@ -733,9 +744,9 @@ export function getPropertyInject(
  */
 export function getClassExtendedMetadata<T = any>(
   decoratorNameKey: ObjectIdentifier,
-  target,
+  target: any,
   propertyName?: string,
-  useCache?: boolean
+  useCache?: boolean,
 ): T {
   if (useCache === undefined) {
     useCache = true;
@@ -752,9 +763,9 @@ export function getClassExtendedMetadata<T = any>(
         decoratorNameKey,
         father,
         propertyName,
-        useCache
+        useCache,
       ),
-      manager.getMetadata(decoratorNameKey, target, propertyName)
+      manager.getMetadata(decoratorNameKey, target, propertyName),
     );
   }
   manager.saveMetadata(extKey, metadata || null, target, propertyName);
@@ -766,7 +777,7 @@ export function getClassExtendedMetadata<T = any>(
  * @param identifier id
  * @param target class
  */
-export function saveProviderId(identifier: ObjectIdentifier, target: any) {
+export function saveProviderId(identifier: ObjectIdentifier, target: any): any {
   if (isProvide(target)) {
     if (identifier) {
       const meta = getClassMetadata(TAGGED_CLS, target);
@@ -786,9 +797,9 @@ export function saveProviderId(identifier: ObjectIdentifier, target: any) {
         id: identifier,
         originName: target.name,
         uuid,
-        name: camelCase(target.name),
+        name: camel(target.name),
       },
-      target
+      target,
     );
   }
   return target;
@@ -798,22 +809,24 @@ export function saveProviderId(identifier: ObjectIdentifier, target: any) {
  * get provider id from module
  * @param module
  */
-export function getProviderId(module): string {
+export function getProviderId(module: any): ObjectIdentifier {
   const metaData = getClassMetadata(TAGGED_CLS, module) as TagClsMetadata;
   if (metaData && metaData.id) {
     return metaData.id;
   }
+  return undefined;
 }
 
 /**
  * get provider name from module
  * @param module
  */
-export function getProviderName(module: any): string | undefined {
+export function getProviderName(module: any): ObjectIdentifier {
   const metaData = getClassMetadata(TAGGED_CLS, module) as TagClsMetadata;
   if (metaData && metaData.name) {
     return metaData.name;
   }
+  return undefined;
 }
 
 /**
@@ -838,22 +851,22 @@ export function isProvide(target: any): boolean {
 
 export function transformTypeFromTSDesign(designFn: any): TSDesignType {
   if (isNullOrUndefined(designFn)) {
-    return { name: 'undefined', isBaseType: true, originDesign: designFn };
+    return { name: "undefined", isBaseType: true, originDesign: designFn };
   }
 
   switch (designFn.name) {
-    case 'String':
-      return { name: 'string', isBaseType: true, originDesign: designFn };
-    case 'Number':
-      return { name: 'number', isBaseType: true, originDesign: designFn };
-    case 'Boolean':
-      return { name: 'boolean', isBaseType: true, originDesign: designFn };
-    case 'Symbol':
-      return { name: 'symbol', isBaseType: true, originDesign: designFn };
-    case 'Object':
-      return { name: 'object', isBaseType: true, originDesign: designFn };
-    case 'Function':
-      return { name: 'function', isBaseType: true, originDesign: designFn };
+    case "String":
+      return { name: "string", isBaseType: true, originDesign: designFn };
+    case "Number":
+      return { name: "number", isBaseType: true, originDesign: designFn };
+    case "Boolean":
+      return { name: "boolean", isBaseType: true, originDesign: designFn };
+    case "Symbol":
+      return { name: "symbol", isBaseType: true, originDesign: designFn };
+    case "Object":
+      return { name: "object", isBaseType: true, originDesign: designFn };
+    case "Function":
+      return { name: "function", isBaseType: true, originDesign: designFn };
     default:
       return {
         name: designFn.name,
@@ -875,7 +888,7 @@ export function savePropertyInject(opts: {
   // propertyKey
   propertyKey: string | symbol;
   args?: any;
-}) {
+}): void {
   // 1、use identifier by user
   let identifier = opts.identifier;
   let injectMode = InjectMode.Identifier;
@@ -905,24 +918,27 @@ export function savePropertyInject(opts: {
       injectMode,
     },
     opts.target,
-    opts.propertyKey.toString()
+    opts.propertyKey.toString(),
   );
 }
 
 export enum BaseType {
-  Boolean = 'boolean',
-  Number = 'number',
-  String = 'string',
+  Boolean = "boolean",
+  Number = "number",
+  String = "string",
 }
 
 /**
  * get parameters type by reflect-metadata
  */
-export function getMethodParamTypes(target, methodName: string | symbol) {
+export function getMethodParamTypes(
+  target: any,
+  methodName: string | symbol,
+): any {
   if (isClass(target)) {
     target = target.prototype;
   }
-  return Reflect.getMetadata('design:paramtypes', target, methodName);
+  return Reflect.getMetadata("design:paramtypes", target, methodName);
 }
 
 /**
@@ -930,9 +946,12 @@ export function getMethodParamTypes(target, methodName: string | symbol) {
  * @param target
  * @param methodName
  */
-export function getPropertyType(target: any, methodName: string | symbol) {
+export function getPropertyType(
+  target: any,
+  methodName: string | symbol,
+): TSDesignType {
   return transformTypeFromTSDesign(
-    Reflect.getMetadata('design:type', target, methodName)
+    Reflect.getMetadata("design:type", target, methodName),
   );
 }
 
@@ -945,7 +964,7 @@ export function getPropertyType(target: any, methodName: string | symbol) {
 export function createCustomPropertyDecorator(
   decoratorKey: string,
   metadata: any,
-  impl = true
+  impl = true,
 ): PropertyDecorator {
   return function (target: any, propertyName: string | symbol): void {
     attachClassMetadata(
@@ -957,7 +976,7 @@ export function createCustomPropertyDecorator(
         impl,
       },
       target,
-      propertyName
+      propertyName,
     );
   };
 }
@@ -966,20 +985,24 @@ export function createCustomPropertyDecorator(
  *
  * @param decoratorKey
  * @param metadata
- * @param impl default true, configuration need decoratorService.registerMethodHandler
+ * @param implOrOptions
  */
 export function createCustomMethodDecorator(
   decoratorKey: string,
   metadata: any,
-  implOrOptions: boolean | MethodDecoratorOptions = { impl: true }
+  implOrOptions: boolean | MethodDecoratorOptions = { impl: true },
 ): MethodDecorator {
-  if (typeof implOrOptions === 'boolean') {
+  if (typeof implOrOptions === "boolean") {
     implOrOptions = { impl: implOrOptions } as MethodDecoratorOptions;
   }
   if (implOrOptions.impl === undefined) {
     implOrOptions.impl = true;
   }
-  return function (target: any, propertyName: string | symbol, descriptor) {
+  return function (
+    target: any,
+    propertyName: string | symbol,
+    _descriptor: TypedPropertyDescriptor<any>,
+  ) {
     attachClassMetadata(
       INJECT_CUSTOM_METHOD,
       {
@@ -988,7 +1011,7 @@ export function createCustomMethodDecorator(
         metadata,
         options: implOrOptions,
       },
-      target
+      target,
     );
   };
 }
@@ -1001,9 +1024,9 @@ export function createCustomMethodDecorator(
 export function createCustomParamDecorator(
   decoratorKey: string,
   metadata: any,
-  implOrOptions: boolean | ParamDecoratorOptions = { impl: true }
+  implOrOptions: boolean | ParamDecoratorOptions = { impl: true },
 ): ParameterDecorator {
-  if (typeof implOrOptions === 'boolean') {
+  if (typeof implOrOptions === "boolean") {
     implOrOptions = { impl: implOrOptions } as ParamDecoratorOptions;
   }
   if (implOrOptions.impl === undefined) {
@@ -1012,7 +1035,7 @@ export function createCustomParamDecorator(
   return function (
     target: any,
     propertyName: string | symbol | undefined,
-    parameterIndex: number
+    parameterIndex: number,
   ) {
     attachClassMetadata(
       INJECT_CUSTOM_PARAM,
@@ -1025,7 +1048,7 @@ export function createCustomParamDecorator(
       },
       target,
       propertyName,
-      'multi'
+      "multi",
     );
   };
 }

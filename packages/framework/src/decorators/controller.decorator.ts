@@ -2,13 +2,14 @@ import {
   CONTROLLER_KEY,
   saveClassMetadata,
   saveModule,
-} from './decorator.manager';
-import { ControllerMetadata, ScopeEnum as ScopeEnum } from '../interface';
-import { Provide } from './provide.decorator';
-import { Scope } from './definitions.decorator';
+} from "./decorator.manager";
+import type { ControllerMetadata } from "../interface";
+import { ScopeEnum as ScopeEnum } from "../interface";
+import { Provide } from "./provide.decorator";
+import { Scope } from "./definitions.decorator";
 
-export const Controller = (customName = ''): ClassDecorator => {
-  return target => {
+export const Controller = (customName = ""): ClassDecorator => {
+  return (target) => {
     saveModule(CONTROLLER_KEY, target);
     saveClassMetadata(
       CONTROLLER_KEY,
@@ -16,7 +17,7 @@ export const Controller = (customName = ''): ClassDecorator => {
         customName: customName,
         controllerName: target.name,
       } as ControllerMetadata,
-      target
+      target,
     );
     Scope(ScopeEnum.Request)(target);
     Provide()(target);

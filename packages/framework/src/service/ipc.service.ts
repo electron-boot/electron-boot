@@ -1,9 +1,10 @@
-import { ipcMain, IpcMainEvent } from 'electron';
-import { Context, IApplicationContext, ISocket } from '../interface';
-import { Socket } from '../decorators/socket.decorator';
-import { Autowired } from '../decorators/autowired.decorator';
-import { EventService } from './event.service';
-import { RequestApplicationContext } from '../context/request.application.context';
+import type { IpcMainEvent, IpcMainInvokeEvent } from "electron";
+import { ipcMain } from "electron";
+import type { Context, IApplicationContext, ISocket } from "../interface";
+import { Socket } from "../decorators/socket.decorator";
+import { Autowired } from "../decorators/autowired.decorator";
+import type { EventService } from "./event.service";
+import { RequestApplicationContext } from "../context/request.application.context";
 
 @Socket()
 export class IpcService implements ISocket {
@@ -14,9 +15,9 @@ export class IpcService implements ISocket {
   constructor(readonly applicationContext: IApplicationContext) {}
 
   @Autowired()
-  protected eventService: EventService;
+  protected eventService!: EventService;
   getName(): string {
-    return 'ipc';
+    return "ipc";
   }
 
   isEnable(): boolean {
@@ -31,7 +32,7 @@ export class IpcService implements ISocket {
     if (!ctx.requestContext) {
       ctx.requestContext = new RequestApplicationContext(
         ctx,
-        this.applicationContext
+        this.applicationContext,
       );
       ctx.requestContext.ready();
     }
@@ -44,7 +45,7 @@ export class IpcService implements ISocket {
     ctx.hasAttr = (key: string): boolean => {
       return ctx.requestContext.hasAttr(key);
     };
-    ctx.requestContext.registerObject('ctx', ctx);
+    ctx.requestContext.registerObject("ctx", ctx);
     return ctx;
   }
 
@@ -55,11 +56,11 @@ export class IpcService implements ISocket {
 
       const ipcResult = async (event: any, data: any[]) => {
         const ctx = this.createAnonymousContext();
-        ctx.setAttr('event', event);
+        ctx.setAttr("event", event);
         if (!data) data = [];
-        const controller = await ctx.requestContext.getAsync(eventInfo.id);
+        const controller = await ctx.requestContext.getAsync<any>(eventInfo.id);
         let result;
-        if (typeof eventInfo.method !== 'string') {
+        if (typeof eventInfo.method !== "string") {
           result = await eventInfo.method(...data);
         } else {
           result = await controller[eventInfo.method].call(controller, ...data);
@@ -73,9 +74,12 @@ export class IpcService implements ISocket {
         event.reply(`${channel}`, result);
       });
       // ipc main handle
-      ipcMain.handle(channel, async (event: IpcMainEvent, ...data: any[]) => {
-        return await ipcResult(event, data);
-      });
+      ipcMain.handle(
+        channel,
+        async (event: IpcMainInvokeEvent, ...data: any[]) => {
+          return await ipcResult(event, data);
+        },
+      );
     }
   }
 

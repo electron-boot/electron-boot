@@ -1,13 +1,10 @@
-import {
-  ConfigService,
-  Configuration,
-  GenericApplicationContext,
-} from '@electron-boot/framework';
-import { pouchdbConfig } from './config.default';
-import { UpdaterService } from './updater.service';
+import type { GenericApplicationContext } from "@electron-boot/framework";
+import { ConfigService, Configuration } from "@electron-boot/framework";
+import { updaterConfig } from "./config.default";
+import { UpdaterService } from "./updater.service";
 
 @Configuration({
-  namespace: 'pouchdb',
+  namespace: "updater",
   imports: [
     {
       component: UpdaterService,
@@ -15,13 +12,13 @@ import { UpdaterService } from './updater.service';
   ],
   importConfigs: [
     {
-      default: pouchdbConfig,
+      default: updaterConfig,
     },
   ],
 })
 export class PouchdbConfiguration {
   constructor(ctx: GenericApplicationContext) {
-    let configuration = ctx.get(ConfigService).getConfiguration('pouchdb');
+    const configuration = ctx.get(ConfigService).getConfiguration("updater");
     ctx.get<UpdaterService>(UpdaterService, [ctx, configuration]);
   }
 }

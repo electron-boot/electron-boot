@@ -1,13 +1,13 @@
-import {
-  IProperties,
+import type {
+  IApplicationContext,
+  IManagedInstance,
   IObjectCreator,
   IObjectDefinition,
-  IManagedInstance,
+  IProperties,
   ObjectIdentifier,
-  IApplicationContext,
-  ScopeEnum,
-} from '../interface';
-import { ObjectCreator } from './object.creator';
+} from "../interface";
+import { ScopeEnum } from "../interface";
+import { ObjectCreator } from "./object.creator";
 
 class FunctionWrapperCreator extends ObjectCreator {
   doConstruct(Clzz: any, args?: any, context?: IApplicationContext): any {
@@ -20,7 +20,7 @@ class FunctionWrapperCreator extends ObjectCreator {
   async doConstructAsync(
     Clzz: any,
     args?: any,
-    context?: IApplicationContext
+    context?: IApplicationContext,
   ): Promise<any> {
     if (!Clzz) {
       return null;
@@ -35,19 +35,19 @@ export class FunctionDefinition implements IObjectDefinition {
     this.creator = new FunctionWrapperCreator(this);
   }
 
-  constructMethod: string;
+  constructMethod!: string;
   constructorArgs: IManagedInstance[] = [];
   creator: IObjectCreator;
-  dependsOn: ObjectIdentifier[];
-  destroyMethod: string;
-  export: string;
-  id: string;
-  name: string;
-  initMethod: string;
-  srcPath: string;
+  dependsOn!: ObjectIdentifier[];
+  destroyMethod!: string;
+  export!: string;
+  id!: string;
+  name!: string;
+  initMethod!: string;
+  srcPath!: string;
   path: any;
-  properties: IProperties;
-  namespace = '';
+  properties!: IProperties;
+  namespace = "";
   asynchronous = true;
   handlerProps = [];
   createFrom;
@@ -56,9 +56,9 @@ export class FunctionDefinition implements IObjectDefinition {
   protected innerAutowire = false;
   protected innerScope: ScopeEnum = ScopeEnum.Singleton;
 
-  getAttr(key: ObjectIdentifier): any {}
+  getAttr(_key: ObjectIdentifier): any {}
 
-  hasAttr(key: ObjectIdentifier): boolean {
+  hasAttr(_key: ObjectIdentifier): boolean {
     return false;
   }
 
@@ -94,5 +94,5 @@ export class FunctionDefinition implements IObjectDefinition {
     return this.innerScope === ScopeEnum.Request;
   }
 
-  setAttr(key: ObjectIdentifier, value: any): void {}
+  setAttr(_key: ObjectIdentifier, _value: any): void {}
 }

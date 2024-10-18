@@ -1,5 +1,5 @@
-import { ObjectIdentifier } from '../interface';
-import { saveProviderId } from './decorator.manager';
+import type { ObjectIdentifier } from "../interface";
+import { saveProviderId } from "./decorator.manager";
 
 export function Provide(identifier?: ObjectIdentifier): ClassDecorator {
   return (target: any) => {

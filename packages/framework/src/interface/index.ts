@@ -1,14 +1,22 @@
-import { EventEmitter } from 'events';
-import { LoggerFactoryConfig } from '@electron-boot/logger';
+import type { EventEmitter } from "events";
+import type { LoggerFactoryConfig } from "@electron-boot/logger";
+import type { DecoratorManager } from "../decorators";
+
+declare global {
+  // eslint-disable-next-line no-var
+  var ELECTRON_APPLICATION_DECORATOR_MANAGER: DecoratorManager;
+  // eslint-disable-next-line no-var
+  var ELECTRON_APPLICATION_CONTEXT: IApplicationContext | null;
+}
 /**
  * Identifier type
  * @type {ObjectIdentifier}
  */
-export type ObjectIdentifier = string | Symbol;
+export type ObjectIdentifier = string | symbol | undefined;
 /**
  * group mode type
  */
-export type GroupModeType = 'one' | 'multi';
+export type GroupModeType = "one" | "multi";
 
 export interface MethodDecoratorOptions {
   impl?: boolean;
@@ -90,23 +98,23 @@ export interface ParamDecoratorOptions {
  * property and parameter decorator
  */
 export type PropertyParamDecorator = (
-  target: Object,
+  target: object,
   propertyKey: ObjectIdentifier | undefined,
-  parameterIndex?: number
+  parameterIndex?: number,
 ) => void;
 /**
  * class scope
  */
 export enum ScopeEnum {
-  Singleton = 'Singleton',
-  Request = 'Request',
-  Prototype = 'Prototype',
+  Singleton = "Singleton",
+  Request = "Request",
+  Prototype = "Prototype",
 }
 
 export enum InjectMode {
-  Identifier = 'Identifier',
-  Class = 'Class',
-  PropertyName = 'PropertyName',
+  Identifier = "Identifier",
+  Class = "Class",
+  PropertyName = "PropertyName",
 }
 
 /**
@@ -157,7 +165,7 @@ export interface AspectMetadata {
 }
 
 export interface IMethodAspect {
-  after?(joinPoint: JoinPoint, result: any, error: Error);
+  after?(joinPoint: JoinPoint, result: any, error: Error): any;
   afterReturn?(joinPoint: JoinPoint, result: any): any;
   afterThrow?(joinPoint: JoinPoint, error: Error): void;
   before?(joinPoint: JoinPoint): void;
@@ -225,7 +233,7 @@ export interface IObjectDefinition {
      */
     metadata: any;
   }>;
-  createFrom: 'framework' | 'file' | 'module';
+  createFrom: "framework" | "file" | "module";
   allowDowngrade: boolean;
   bindHook?: (module: any, options?: IObjectDefinition) => void;
 }
@@ -264,17 +272,17 @@ export type HandlerFunction = (
    * decorator set metadata
    */
   meta: any,
-  instance: any
+  instance: any,
 ) => any;
 
 export type MethodHandlerFunction = (options: {
-  target: new (...args) => any;
+  target: new (...args: any[]) => any;
   propertyName: string;
   metadata: any;
 }) => IMethodAspect;
 
 export type ParameterHandlerFunction = (options: {
-  target: new (...args) => any;
+  target: new (...args: any[]) => any;
   propertyName: string;
   metadata: any;
   originArgs: Array<any>;
@@ -299,7 +307,7 @@ export interface IObjectCreator {
   doConstructAsync(
     Clzz: any,
     args?: any,
-    context?: IApplicationContext
+    context?: IApplicationContext,
   ): Promise<any>;
   doInit(obj: any): void;
   doInitAsync(obj: any): Promise<void>;
@@ -316,7 +324,7 @@ export interface IObjectDefinitionRegistry {
   readonly count: number;
   registerDefinition(
     identifier: ObjectIdentifier,
-    definition: IObjectDefinition
+    definition: IObjectDefinition,
   ): void;
   getSingletonDefinitionIds(): ObjectIdentifier[];
   getDefinition(identifier: ObjectIdentifier): IObjectDefinition;
@@ -332,11 +340,11 @@ export interface IObjectDefinitionRegistry {
 }
 
 export enum ObjectLifeCycleEvent {
-  BEFORE_BIND = 'beforeBind',
-  BEFORE_CREATED = 'beforeObjectCreated',
-  AFTER_CREATED = 'afterObjectCreated',
-  AFTER_INIT = 'afterObjectInit',
-  BEFORE_DESTROY = 'beforeObjectDestroy',
+  BEFORE_BIND = "beforeBind",
+  BEFORE_CREATED = "beforeObjectCreated",
+  AFTER_CREATED = "afterObjectCreated",
+  AFTER_INIT = "afterObjectInit",
+  BEFORE_DESTROY = "beforeObjectDestroy",
 }
 
 interface ObjectLifeCycleOptions {
@@ -381,22 +389,22 @@ export interface IObjectFactory {
   get<T>(
     identifier: new (...args: any[]) => T,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): T;
   get<T>(
     identifier: ObjectIdentifier,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): T;
   getAsync<T>(
     identifier: new (...args: any[]) => T,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): Promise<T>;
   getAsync<T>(
     identifier: ObjectIdentifier,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): Promise<T>;
 }
 
@@ -409,10 +417,11 @@ export interface IIdentifierRelationShip {
 
 export interface IApplicationContext
   extends IObjectFactory,
-    WithFn<IObjectLifeCycle> {
+    WithFn<IObjectLifeCycle>,
+    IModuleStore {
   parent: IApplicationContext;
   identifierMapping: IIdentifierRelationShip;
-  objectCreateEventTarget: EventEmitter;
+  objectCreateEventTarget: EventEmitter | null;
   ready(): void | Promise<void>;
   stop(): Promise<void>;
   registerObject(identifier: ObjectIdentifier, target: any): void;
@@ -425,7 +434,7 @@ export interface IApplicationContext
   bind<T>(
     identifier: ObjectIdentifier,
     target: T,
-    options?: Partial<IObjectDefinition>
+    options?: Partial<IObjectDefinition>,
   ): void;
   bindClass(exports: any, options?: Partial<IObjectDefinition>): void;
   createChild(): IApplicationContext;
@@ -461,12 +470,12 @@ export interface AppInfo {
   HOME: string;
   env: string;
 }
-
-export function defineConfig(config: IConfig) {
+// defineConfig 重载方便外面知道参数类型
+export const defineConfig = (config: IConfig): IConfig => {
   return config;
-}
+};
 
-export interface BootstrapOptions<T = any> {
+export interface BootstrapOptions {
   /**
    * global config
    */
@@ -490,7 +499,7 @@ export interface BootstrapOptions<T = any> {
 export interface IFileDetector {
   run(
     container: IApplicationContext,
-    fileDetectorOptions?: Record<string, any>
+    fileDetectorOptions?: Record<string, any>,
   ): void | Promise<void>;
   setExtraDetectorOptions(detectorOptions: Record<string, any>): void;
 }
@@ -550,7 +559,7 @@ export interface EventInfo {
   method: string | ((...args: any[]) => void);
 }
 
-export type DynamicEventInfo = Omit<EventInfo, 'id' | 'method'>;
+export type DynamicEventInfo = Omit<EventInfo, "id" | "method">;
 
 export interface Context {
   /**
@@ -566,7 +575,7 @@ export interface Context {
    * @param key
    * @param value
    */
-  setAttr(key: string, value: any);
+  setAttr(key: string, value: any): void;
 
   /**
    * Get value from app attribute map

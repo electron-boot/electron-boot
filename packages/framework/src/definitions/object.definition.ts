@@ -1,29 +1,29 @@
-import {
+import type {
   IObjectCreator,
   IObjectDefinition,
   ObjectIdentifier,
-  ScopeEnum,
-} from '../interface';
-import { ObjectProperties } from './properties.definition';
-import { ObjectCreator } from './object.creator';
+} from "../interface";
+import { ScopeEnum } from "../interface";
+import { ObjectProperties } from "./properties.definition";
+import { ObjectCreator } from "./object.creator";
 
 export class ObjectDefinition implements IObjectDefinition {
   protected _attrs = new Map<ObjectIdentifier, any>();
   protected _asynchronous = false;
   scope: ScopeEnum = ScopeEnum.Singleton;
-  creator: IObjectCreator = null;
-  id: string = null;
-  name: string = null;
-  initMethod: string = null;
-  destroyMethod: string = null;
-  constructMethod: string = null;
+  creator: IObjectCreator;
+  id!: string;
+  name!: string;
+  initMethod!: string;
+  destroyMethod!: string;
+  constructMethod!: string;
   constructorArgs: any[] = [];
-  srcPath: string;
-  path: any = null;
-  export: string = null;
+  srcPath!: string;
+  path: any;
+  export!: string;
   dependsOn: ObjectIdentifier[] = [];
   properties = new ObjectProperties();
-  namespace = '';
+  namespace = "";
   handlerProps = [];
   createFrom;
   allowDowngrade = false;

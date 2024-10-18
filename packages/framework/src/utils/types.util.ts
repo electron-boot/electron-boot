@@ -1,10 +1,12 @@
-import { types } from 'util';
+import { types } from "util";
+
 const ToString = Function.prototype.toString;
 const hasOwn = Object.prototype.hasOwnProperty;
 const toStr = Object.prototype.toString;
+
 const anonRegex =
-  /^function\s+\(|^function\s+anonymous\(|^\(?(\w+,)*\w+\)?\s*\=\>|^\(\s*\)\s*\=\>/;
-const classRegex = /^\s*class\s+(\w+)/;
+  /^function\s+\(|^function\s+anonymous\(|^\(?(?:\w+,)*\w+\)?\s*=>|^\(\s*\)\s*=>/;
+const classRegex = /^\s*class\s+\w+/;
 /**
  * check target is string or not.
  * @export
@@ -12,7 +14,7 @@ const classRegex = /^\s*class\s+(\w+)/;
  * @returns {boolean}
  */
 export function isString(target: any): boolean {
-  return typeof target === 'string';
+  return typeof target === "string";
 }
 /**
  * check target is number or not.
@@ -21,7 +23,7 @@ export function isString(target: any): boolean {
  * @returns {boolean}
  */
 export function isNumber(target: any): boolean {
-  return typeof target === 'number';
+  return typeof target === "number";
 }
 /**
  * check target is boolean or not.
@@ -30,7 +32,7 @@ export function isNumber(target: any): boolean {
  * @returns {boolean}
  */
 export function isBoolean(target: any): boolean {
-  return typeof target === 'boolean';
+  return typeof target === "boolean";
 }
 /**
  * check target is null or not.
@@ -38,8 +40,8 @@ export function isBoolean(target: any): boolean {
  * @returns {boolean}
  * @param target
  */
-export function isNull(target: any) {
-  return target === null;
+export function isNull(target: any): boolean {
+  return target == null;
 }
 /**
  * check target is undefined or not.
@@ -48,7 +50,7 @@ export function isNull(target: any) {
  * @returns {boolean}
  */
 export function isUndefined(target: any): boolean {
-  return typeof target === 'undefined';
+  return typeof target === "undefined";
 }
 
 /**
@@ -58,7 +60,7 @@ export function isUndefined(target: any): boolean {
  * @returns {boolean}
  */
 export function isIdentifier(target: any): boolean {
-  return typeof target === 'string' || typeof target === 'symbol';
+  return typeof target === "string" || typeof target === "symbol";
 }
 
 /**
@@ -86,23 +88,23 @@ export function isArray(target: any): boolean {
  * @returns {boolean}
  */
 export function isRegExp(obj: any): boolean {
-  return toStr.call(obj) === '[object RegExp]';
+  return toStr.call(obj) === "[object RegExp]";
 }
 
 /**
  * check target is plain object or not.
  * @param target
  */
-export function isPlainObject(target: any) {
-  if (!target || toStr.call(target) !== '[object Object]') {
+export function isPlainObject(target: any): boolean {
+  if (!target || toStr.call(target) !== "[object Object]") {
     return false;
   }
 
-  const hasOwnConstructor = hasOwn.call(target, 'constructor');
+  const hasOwnConstructor = hasOwn.call(target, "constructor");
   const hasIsPrototypeOf =
     target.constructor &&
     target.constructor.prototype &&
-    hasOwn.call(target.constructor.prototype, 'isPrototypeOf');
+    hasOwn.call(target.constructor.prototype, "isPrototypeOf");
   // Not own constructor property must be Object
   if (target.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
     return false;
@@ -115,7 +117,7 @@ export function isPlainObject(target: any) {
     /**/
   }
 
-  return typeof key === 'undefined' || hasOwn.call(target, key);
+  return typeof key === "undefined" || hasOwn.call(target, key);
 }
 /**
  * check target is function or not.
@@ -124,7 +126,7 @@ export function isPlainObject(target: any) {
  * @returns {boolean}
  */
 export function isFunction(target: any): boolean {
-  return typeof target === 'function';
+  return typeof target === "function";
 }
 /**
  * check target is generator function or not.
@@ -188,8 +190,8 @@ export function isMetadataObject(
     return false;
   }
   if (props.length) {
-    return Object.keys(target).some(n =>
-      props.some(ps => (isString(ps) ? ps === n : ps.indexOf(n) > 0))
+    return Object.keys(target).some((n) =>
+      props.some((ps) => (isString(ps) ? ps === n : ps.indexOf(n) > 0)),
     );
   }
   return true;
@@ -202,7 +204,7 @@ export function isMetadataObject(
  */
 export function isClass(
   target: any,
-  exclude?: (target: any) => boolean
+  exclude?: (target: any) => boolean,
 ): boolean {
   if (!isFunction(target)) return false;
   if (!target.name || !target.prototype) return false;
@@ -211,5 +213,5 @@ export function isClass(
   if (isPrimitiveType(target)) return false;
   if (anonRegex.test(ToString.call(target))) return false;
   if (classRegex.test(ToString.call(target))) return true;
-  return Object.getOwnPropertyNames(target).indexOf('caller') < 0;
+  return Object.getOwnPropertyNames(target).indexOf("caller") < 0;
 }

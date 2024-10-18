@@ -2,11 +2,11 @@ import {
   EVENT_KEY,
   getClassMetadata,
   saveClassMetadata,
-} from './decorator.manager';
-import { EventMetadata } from '../interface';
+} from "./decorator.manager";
+import type { EventMetadata } from "../interface";
 
-export const Event = (customName: string = ''): MethodDecorator => {
-  return (target, propertyKey: string | Symbol, descriptor) => {
+export const Event = (customName: string = ""): MethodDecorator => {
+  return (target, propertyKey: string | symbol, _descriptor) => {
     let metadata = getClassMetadata<Array<EventMetadata>>(EVENT_KEY, target);
     if (!metadata) {
       metadata = [];

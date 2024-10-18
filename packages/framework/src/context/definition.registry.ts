@@ -1,16 +1,17 @@
-import {
+import type {
   IIdentifierRelationShip,
   IObjectDefinition,
   IObjectDefinitionRegistry,
   ObjectIdentifier,
-} from '../interface';
+} from "../interface";
 import {
   getProviderId,
   getProviderName,
   getProviderUUId,
-} from '../decorators/decorator.manager';
+} from "../decorators/decorator.manager";
+import { isEmpty } from "radash";
 
-const PREFIX = '_id_default_';
+const PREFIX = "_id_default_";
 
 class LegacyIdentifierRelation
   extends Map<ObjectIdentifier, string>
@@ -19,7 +20,10 @@ class LegacyIdentifierRelation
   saveClassRelation(module: any, namespace?: string) {
     const providerId = getProviderUUId(module);
     // save uuid
-    this.set(providerId, providerId);
+    this.set(
+      providerId,
+      typeof providerId === "undefined" ? "" : providerId.toString(),
+    );
     if (providerId) {
       // save alias id
       const aliasId = getProviderId(module);
@@ -27,11 +31,19 @@ class LegacyIdentifierRelation
         // save alias Id
         this.set(aliasId, providerId);
       }
+      const providerName = getProviderName(module);
       // save className alias
-      this.set(getProviderName(module), providerId);
+      this.set(providerName, providerId);
       // save namespace alias
       if (namespace) {
-        this.set(namespace + ':' + getProviderName(module), providerId);
+        this.set(
+          namespace +
+            ":" +
+            (typeof providerName === "undefined"
+              ? ""
+              : providerName.toString()),
+          providerId,
+        );
       }
     }
   }
@@ -46,7 +58,7 @@ class LegacyIdentifierRelation
   }
 
   getRelation(id: ObjectIdentifier): string {
-    return this.get(id);
+    return this.get(id) ?? "";
   }
 }
 
@@ -54,23 +66,23 @@ export class ObjectDefinitionRegistry
   extends Map
   implements IObjectDefinitionRegistry
 {
-  private singletonIds = [];
+  private singletonIds: ObjectIdentifier[] = [];
   private _identifierRelation: IIdentifierRelationShip =
     new LegacyIdentifierRelation();
 
-  get identifierRelation() {
+  get identifierRelation(): IIdentifierRelationShip {
     if (!this._identifierRelation) {
       this._identifierRelation = new LegacyIdentifierRelation();
     }
     return this._identifierRelation;
   }
 
-  set identifierRelation(identifierRelation) {
+  set identifierRelation(identifierRelation: IIdentifierRelationShip) {
     this._identifierRelation = identifierRelation;
   }
 
-  get identifiers() {
-    const ids = [];
+  get identifiers(): ObjectIdentifier[] {
+    const ids: ObjectIdentifier[] = [];
     for (const key of this.keys()) {
       if (key.indexOf(PREFIX) === -1) {
         ids.push(key);
@@ -79,7 +91,7 @@ export class ObjectDefinitionRegistry
     return ids;
   }
 
-  get count() {
+  get count(): number {
     return this.size;
   }
 
@@ -88,7 +100,7 @@ export class ObjectDefinitionRegistry
   }
 
   getDefinitionByName(name: string): IObjectDefinition[] {
-    const definitions = [];
+    const definitions: IObjectDefinition[] = [];
     for (const v of this.values()) {
       const definition = v as IObjectDefinition;
       if (definition.name === name) {
@@ -100,8 +112,8 @@ export class ObjectDefinitionRegistry
 
   registerDefinition(
     identifier: ObjectIdentifier,
-    definition: IObjectDefinition
-  ) {
+    definition: IObjectDefinition,
+  ): void {
     if (definition.isSingletonScope()) {
       this.singletonIds.push(identifier);
     }
@@ -132,8 +144,8 @@ export class ObjectDefinitionRegistry
     return this.has(PREFIX + identifier);
   }
 
-  registerObject(identifier: ObjectIdentifier, target: any) {
-    this.set(PREFIX + identifier, target);
+  registerObject(identifier: ObjectIdentifier, target: any): void {
+    this.set(PREFIX + isEmpty(identifier) ? "" : isEmpty.toString(), target);
   }
 
   getObject(identifier: ObjectIdentifier): any {
@@ -145,7 +157,7 @@ export class ObjectDefinitionRegistry
     return this.identifierRelation;
   }
 
-  setIdentifierRelation(identifierRelation: IIdentifierRelationShip) {
+  setIdentifierRelation(identifierRelation: IIdentifierRelationShip): void {
     this.identifierRelation = identifierRelation;
   }
 }

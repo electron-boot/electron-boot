@@ -1,17 +1,17 @@
-import { Singleton } from '../decorators/definitions.decorator';
-import pm from 'picomatch';
-import {
+import { Singleton } from "../decorators/definitions.decorator";
+import pm from "picomatch";
+import type {
   AspectMetadata,
   IApplicationContext,
   IMethodAspect,
   JoinPoint,
-} from '../interface';
+} from "../interface";
 import {
   ASPECT_KEY,
   getClassMetadata,
   listModule,
-} from '../decorators/decorator.manager';
-import { isAsyncFunction } from '../utils/types.util';
+} from "../decorators/decorator.manager";
+import { isAsyncFunction } from "../utils/types.util";
 
 @Singleton()
 export class AspectService {
@@ -20,51 +20,54 @@ export class AspectService {
   /**
    * load aspect method for container
    */
-  public async loadAspect() {
+  public async loadAspect(): Promise<void> {
     // for aop implementation
     const aspectModules = listModule(ASPECT_KEY);
     // sort for aspect target
-    let aspectDataList = [];
+    let aspectDataList: any[] = [];
     for (const module of aspectModules) {
       const data = getClassMetadata(ASPECT_KEY, module);
       aspectDataList = aspectDataList.concat(
-        data.map(el => {
+        data.map((el) => {
           el.aspectModule = module;
           return el;
-        })
+        }),
       );
     }
 
     // sort priority
-    aspectDataList.sort((pre, next) => {
+    aspectDataList.sort((pre: any, next: any) => {
       return (next.priority || 0) - (pre.priority || 0);
     });
 
     for (const aspectData of aspectDataList) {
       // aspect instance init
       const aspectIns = await this.applicationContext.getAsync<IMethodAspect>(
-        aspectData.aspectModule
+        aspectData.aspectModule,
       );
       await this.addAspect(aspectIns, aspectData);
     }
   }
 
-  public async addAspect(aspectIns: IMethodAspect, aspectData: AspectMetadata) {
+  public async addAspect(
+    aspectIns: IMethodAspect,
+    aspectData: AspectMetadata,
+  ): Promise<void> {
     const module = aspectData.aspectTarget;
     const names = Object.getOwnPropertyNames(module.prototype);
     const isMatch = aspectData.match
-      ? typeof aspectData.match === 'string'
+      ? typeof aspectData.match === "string"
         ? pm(aspectData.match)
         : aspectData.match
       : () => true;
 
     for (const name of names) {
-      if (name === 'constructor' || !isMatch(name)) {
+      if (name === "constructor" || !isMatch(name)) {
         continue;
       }
       const descriptor = Object.getOwnPropertyDescriptor(
         module.prototype,
-        name
+        name,
       );
       if (!descriptor || descriptor.writable === false) {
         continue;
@@ -83,8 +86,8 @@ export class AspectService {
   public interceptPrototypeMethod(
     Clz: new (...args) => any,
     methodName: string | symbol,
-    aspectObject: IMethodAspect | (() => IMethodAspect)
-  ) {
+    aspectObject: IMethodAspect | (() => IMethodAspect),
+  ): void {
     const originMethod = Clz.prototype[methodName];
 
     if (isAsyncFunction(Clz.prototype[methodName])) {
@@ -101,7 +104,7 @@ export class AspectService {
           proceedIsAsyncFunction: true,
         } as JoinPoint;
 
-        if (typeof aspectObject === 'function') {
+        if (typeof aspectObject === "function") {
           aspectObject = aspectObject();
         }
 
@@ -115,9 +118,9 @@ export class AspectService {
           joinPoint.proceed = undefined;
           const resultTemp = await aspectObject.afterReturn?.(
             joinPoint,
-            result
+            result,
           );
-          result = typeof resultTemp === 'undefined' ? result : resultTemp;
+          result = typeof resultTemp === "undefined" ? result : resultTemp;
           return result;
         } catch (err) {
           joinPoint.proceed = undefined;
@@ -145,7 +148,7 @@ export class AspectService {
           proceedIsAsyncFunction: false,
         } as JoinPoint;
 
-        if (typeof aspectObject === 'function') {
+        if (typeof aspectObject === "function") {
           aspectObject = aspectObject();
         }
 
@@ -158,7 +161,7 @@ export class AspectService {
           }
           joinPoint.proceed = undefined;
           const resultTemp = aspectObject.afterReturn?.(joinPoint, result);
-          result = typeof resultTemp === 'undefined' ? result : resultTemp;
+          result = typeof resultTemp === "undefined" ? result : resultTemp;
           return result;
         } catch (err) {
           joinPoint.proceed = undefined;

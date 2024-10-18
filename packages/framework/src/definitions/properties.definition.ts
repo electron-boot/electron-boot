@@ -1,4 +1,4 @@
-import { IProperties, ObjectIdentifier } from '../interface';
+import type { IProperties, ObjectIdentifier } from "../interface";
 
 export class ObjectProperties
   extends Map<ObjectIdentifier, any>

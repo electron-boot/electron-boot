@@ -1,7 +1,7 @@
-import { format } from 'winston';
-import { IGenericLogger } from './interface';
-import { ORIGIN_ARGS, ORIGIN_ERROR } from './constant';
-import { FormatWrap } from 'logform';
+import { format } from "winston";
+import type { FormatWrap } from "logform";
+import type { IGenericLogger } from "./interface";
+import { ORIGIN_ARGS, ORIGIN_ERROR } from "./constant";
 
 export const displayCommonMessage: FormatWrap = format(
   (
@@ -10,7 +10,7 @@ export const displayCommonMessage: FormatWrap = format(
       defaultLabel?: string;
       defaultMeta?: Record<string, unknown>;
       target?: IGenericLogger;
-    }
+    },
   ) => {
     if (!info.pid) {
       info.pid = process.pid;
@@ -40,29 +40,29 @@ export const displayCommonMessage: FormatWrap = format(
       info.LEVEL = info.level.toUpperCase();
     }
     if (!info.defaultLabel) {
-      info.defaultLabel = opts.defaultLabel || '';
+      info.defaultLabel = opts.defaultLabel || "";
     }
     return Object.assign(info, opts.defaultMeta);
-  }
+  },
 );
 
 function joinLoggerLabel(labelSplit: any, ...labels: any[]) {
   if (labels.length === 0) {
-    return '';
+    return "";
   }
-  const newLabels = labels.filter(label => !!label);
+  const newLabels = labels.filter((label) => !!label);
   if (newLabels.length === 0) {
-    return '';
+    return "";
   }
   return `[${newLabels.join(labelSplit)}] `;
 }
 
 export const displayLabels = format((info, opts) => {
-  opts.labelSplit = opts.labelSplit || ':';
+  opts.labelSplit = opts.labelSplit || ":";
   info.labelText = joinLoggerLabel(
     opts.labelSplit,
     info.defaultLabel,
-    ...[].concat(info.label)
+    ...[].concat(info.label),
   );
   return info;
 });

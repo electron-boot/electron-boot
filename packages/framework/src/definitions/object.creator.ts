@@ -1,6 +1,6 @@
-import type { IObjectCreator, IObjectDefinition } from '../interface';
-import * as Types from '../utils/types.util';
-import { UseWrongMethodError } from '../error/framework';
+import type { IObjectCreator, IObjectDefinition } from "../interface";
+import * as Types from "../utils/types.util";
+import { UseWrongMethodError } from "../error/framework";
 
 export class ObjectCreator implements IObjectCreator {
   protected definition: IObjectDefinition;
@@ -15,7 +15,7 @@ export class ObjectCreator implements IObjectCreator {
    */
   load(): any {
     let Clzz = null;
-    if (typeof this.definition.path === 'string') {
+    if (typeof this.definition.path === "string") {
       // 解析xml结果 默认 path = '' 需要兼容处理掉
       if (!this.definition.path) {
         return Clzz;
@@ -93,17 +93,17 @@ export class ObjectCreator implements IObjectCreator {
         Types.isAsyncFunction(inst[this.definition.initMethod])
       ) {
         throw new UseWrongMethodError(
-          'context.get',
-          'context.getAsync',
-          this.definition.id
+          "context.get",
+          "context.getAsync",
+          this.definition.id,
         );
       } else {
         const rt = inst[this.definition.initMethod].call(inst);
         if (Types.isPromise(rt)) {
           throw new UseWrongMethodError(
-            'context.get',
-            'context.getAsync',
-            this.definition.id
+            "context.get",
+            "context.getAsync",
+            this.definition.id,
           );
         }
       }
@@ -123,7 +123,7 @@ export class ObjectCreator implements IObjectCreator {
         await initFn.call(inst);
       } else {
         if (initFn.length === 1) {
-          await new Promise(resolve => {
+          await new Promise((resolve) => {
             initFn.call(inst, resolve);
           });
         } else {
@@ -156,7 +156,7 @@ export class ObjectCreator implements IObjectCreator {
         await fn.call(obj);
       } else {
         if (fn.length === 1) {
-          await new Promise(resolve => {
+          await new Promise((resolve) => {
             fn.call(obj, resolve);
           });
         } else {

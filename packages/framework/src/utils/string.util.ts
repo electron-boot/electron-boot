@@ -1,4 +1,4 @@
-import { randomBytes } from 'crypto';
+import { randomBytes } from "crypto";
 
 /**
  * check str is blank or not
@@ -20,5 +20,5 @@ export function isNotBlank(str: string): boolean {
 }
 
 export function generateRandomId(): string {
-  return randomBytes(16).toString('hex');
+  return randomBytes(16).toString("hex");
 }

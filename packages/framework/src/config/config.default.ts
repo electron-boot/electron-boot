@@ -1,4 +1,4 @@
-import { defineConfig } from '../interface';
+import { defineConfig } from "../interface";
 
 export default defineConfig({
   logger: {},

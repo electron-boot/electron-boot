@@ -1,5 +1,6 @@
-import { IFileDetector } from '../interface';
-import { CONFIGURATION_KEY, saveClassMetadata } from './decorator.manager';
+import { IFileDetector, ScopeEnum } from "../interface";
+import { CONFIGURATION_KEY, saveClassMetadata } from "./decorator.manager";
+import { Scope } from "./definitions.decorator";
 
 export interface IComponentInfo {
   component: any;
@@ -26,9 +27,10 @@ export interface InjectionConfigurationOptions {
 }
 
 export function Configuration(
-  options: InjectionConfigurationOptions = {}
+  options: InjectionConfigurationOptions = {},
 ): ClassDecorator {
   return (target: any) => {
     saveClassMetadata(CONFIGURATION_KEY, options, target);
+    Scope(ScopeEnum.Singleton)(target);
   };
 }

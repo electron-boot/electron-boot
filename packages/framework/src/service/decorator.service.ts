@@ -1,6 +1,6 @@
-import { Init, Singleton } from '../decorators/definitions.decorator';
-import { Autowired } from '../decorators/autowired.decorator';
-import {
+import { Init, Singleton } from "../decorators/definitions.decorator";
+import { Autowired } from "../decorators/autowired.decorator";
+import type {
   HandlerFunction,
   IApplicationContext,
   JoinPoint,
@@ -10,8 +10,8 @@ import {
   ParameterHandlerFunction,
   PipeTransform,
   PipeUnionTransform,
-} from '../interface';
-import { AspectService } from './aspect.service';
+} from "../interface";
+import type { AspectService } from "./aspect.service";
 import {
   ALL,
   APPLICATION_CONTEXT_KEY,
@@ -21,10 +21,10 @@ import {
   INJECT_CUSTOM_METHOD,
   INJECT_CUSTOM_PARAM,
   transformTypeFromTSDesign,
-} from '../decorators/decorator.manager';
-import { isClass } from '../utils/types.util';
-import { CommonError, ParameterError } from '../error/framework';
-import { ConfigService } from './config.service';
+} from "../decorators/decorator.manager";
+import { isClass } from "../utils/types.util";
+import { CommonError, ParameterError } from "../error/framework";
+import type { ConfigService } from "./config.service";
 
 @Singleton()
 export class DecoratorService {
@@ -35,17 +35,17 @@ export class DecoratorService {
     new Map();
 
   @Autowired()
-  private aspectService: AspectService;
+  private aspectService!: AspectService;
 
   @Autowired()
-  private configService: ConfigService;
+  private configService!: ConfigService;
 
   constructor(readonly applicationContext: IApplicationContext) {}
 
   @Init()
-  protected init() {
+  protected init(): void {
     // add custom method decorator listener
-    this.applicationContext.onBeforeBind(Clzz => {
+    this.applicationContext.onBeforeBind((Clzz) => {
       // find custom method decorator metadata, include method decorator information array
       const methodDecoratorMetadataList: MethodDecoratorMetaData[] =
         getClassMetadata(INJECT_CUSTOM_METHOD, Clzz);
@@ -65,7 +65,7 @@ export class DecoratorService {
               const methodDecoratorHandler = this.methodDecoratorMap.get(key);
               if (!methodDecoratorHandler) {
                 throw new CommonError(
-                  `Method Decorator "${key}" handler not found, please register first.`
+                  `Method Decorator "${key}" handler not found, please register first.`,
                 );
               }
               return methodDecoratorHandler({
@@ -73,7 +73,7 @@ export class DecoratorService {
                 propertyName,
                 metadata,
               });
-            }
+            },
           );
         }
       }
@@ -107,7 +107,7 @@ export class DecoratorService {
                       this.parameterDecoratorMap.get(key);
                     if (!parameterDecoratorHandler) {
                       throw new CommonError(
-                        `Parameter Decorator "${key}" handler not found, please register first.`
+                        `Parameter Decorator "${key}" handler not found, please register first.`,
                       );
                     }
                   } else {
@@ -148,31 +148,31 @@ export class DecoratorService {
                   ];
                   for (const pipe of pipes) {
                     let transform;
-                    if ('transform' in pipe) {
-                      transform = pipe['transform'].bind(pipe);
+                    if ("transform" in pipe) {
+                      transform = pipe["transform"].bind(pipe);
                     } else if (isClass(pipe)) {
                       const ins =
                         await this.applicationContext.getAsync<PipeTransform>(
-                          pipe as any
+                          pipe as any,
                         );
                       transform = ins.transform.bind(ins);
-                    } else if (typeof pipe === 'function') {
+                    } else if (typeof pipe === "function") {
                       transform = pipe;
                     } else {
                       throw new ParameterError(
-                        'Pipe must be a function or implement PipeTransform interface'
+                        "Pipe must be a function or implement PipeTransform interface",
                       );
                     }
                     newArgs[parameterIndex] = await transform(
                       newArgs[parameterIndex],
                       {
                         metaType: transformTypeFromTSDesign(
-                          paramTypes[parameterIndex]
+                          paramTypes[parameterIndex],
                         ),
                         metadata,
                         target: joinPoint.target,
                         methodName: joinPoint.methodName,
-                      }
+                      },
                     );
                   }
                 }
@@ -195,7 +195,7 @@ export class DecoratorService {
           this.defineGetterPropertyValue(
             item,
             instance,
-            this.getHandler(item.key)
+            this.getHandler(item.key),
           );
         }
       }
@@ -204,9 +204,9 @@ export class DecoratorService {
     // register @ApplicationContext
     this.registerPropertyHandler(
       APPLICATION_CONTEXT_KEY,
-      (propertyName, mete) => {
+      (_propertyName: string, _mete: any) => {
         return this.applicationContext;
-      }
+      },
     );
 
     // register @Config decorator handler
@@ -215,40 +215,43 @@ export class DecoratorService {
         return this.configService.getConfiguration();
       } else {
         return this.configService.getConfiguration(
-          meta.identifier ?? propertyName
+          meta.identifier ?? propertyName,
         );
       }
     });
   }
 
-  public registerPropertyHandler(decoratorKey: string, fn: HandlerFunction) {
+  public registerPropertyHandler(
+    decoratorKey: string,
+    fn: HandlerFunction,
+  ): void {
     this.propertyHandlerMap.set(decoratorKey, fn);
   }
 
   public registerMethodHandler(
     decoratorKey: string,
-    fn: MethodHandlerFunction
-  ) {
+    fn: MethodHandlerFunction,
+  ): void {
     this.methodDecoratorMap.set(decoratorKey, fn);
   }
 
   public registerParameterHandler(
     decoratorKey: string,
-    fn: ParameterHandlerFunction
-  ) {
+    fn: ParameterHandlerFunction,
+  ): void {
     this.parameterDecoratorMap.set(decoratorKey, fn);
   }
 
   public registerParameterPipes(
     decoratorKey: string,
-    pipes: PipeUnionTransform[]
-  ) {
+    pipes: PipeUnionTransform[],
+  ): void {
     if (!this.parameterDecoratorPipes.has(decoratorKey)) {
       this.parameterDecoratorPipes.set(decoratorKey, []);
     }
     this.parameterDecoratorPipes.set(
       decoratorKey,
-      this.parameterDecoratorPipes.get(decoratorKey).concat(pipes)
+      this.parameterDecoratorPipes.get(decoratorKey)!.concat(pipes),
     );
   }
 
@@ -272,9 +275,10 @@ export class DecoratorService {
     }
   }
 
-  private getHandler(key: string) {
+  private getHandler(key: string): HandlerFunction {
     if (this.propertyHandlerMap.has(key)) {
-      return this.propertyHandlerMap.get(key);
+      return this.propertyHandlerMap.get(key)!;
     }
+    return undefined as unknown as HandlerFunction;
   }
 }

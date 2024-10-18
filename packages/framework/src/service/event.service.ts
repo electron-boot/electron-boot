@@ -1,19 +1,19 @@
-import { Singleton } from '../decorators/definitions.decorator';
-import { camelCase } from 'lodash';
+import { Singleton } from "../decorators/definitions.decorator";
+import { camel } from "radash";
 import {
   CONTROLLER_KEY,
   EVENT_KEY,
   getClassMetadata,
   getProviderUUId,
   listModule,
-} from '../decorators/decorator.manager';
-import {
-  EventMetadata,
+} from "../decorators/decorator.manager";
+import type {
   ControllerMetadata,
-  EventInfo,
   DynamicEventInfo,
-} from '../interface';
-import { DuplicateEventError } from '../error/framework';
+  EventInfo,
+  EventMetadata,
+} from "../interface";
+import { DuplicateEventError } from "../error/framework";
 
 @Singleton()
 export class EventService {
@@ -32,7 +32,7 @@ export class EventService {
       // 控制器参数
       const controllerOption: ControllerMetadata = getClassMetadata(
         CONTROLLER_KEY,
-        module
+        module,
       );
       // 添加控制器
       this.addController(module, controllerOption);
@@ -46,36 +46,36 @@ export class EventService {
    */
   public addController(
     controllerClazz: any,
-    controllerMetadata: ControllerMetadata
-  ) {
+    controllerMetadata: ControllerMetadata,
+  ): void {
     const id = getProviderUUId(controllerClazz);
     /**
      * 所有的路由参数列表
      */
     const eventMetadata: EventMetadata[] = getClassMetadata(
       EVENT_KEY,
-      controllerClazz
+      controllerClazz,
     );
     /**
      * 如果routerInfos有数据
      */
-    if (eventMetadata && typeof eventMetadata[Symbol.iterator] === 'function') {
+    if (eventMetadata && typeof eventMetadata[Symbol.iterator] === "function") {
       for (const event of eventMetadata) {
-        let controllerName = '';
+        let controllerName = "";
         if (controllerMetadata.customName) {
           controllerName = controllerMetadata.customName;
         } else {
-          controllerName = camelCase(controllerMetadata.controllerName);
+          controllerName = camel(controllerMetadata.controllerName);
         }
 
-        let eventName = '';
+        let eventName = "";
         if (event.customName) {
           eventName = event.customName;
         } else {
-          eventName = camelCase(event.eventName);
+          eventName = camel(event.eventName);
         }
 
-        eventName = [controllerName, eventName].join('/');
+        eventName = [controllerName, eventName].join("/");
         // 路由信息
         const data: EventInfo = {
           id,
@@ -97,14 +97,14 @@ export class EventService {
   public addRouter(
     path: string,
     routerFunction: (...args) => void,
-    routerInfoOption: DynamicEventInfo
-  ) {
+    routerInfoOption: DynamicEventInfo,
+  ): void {
     this.checkDuplicateAndPush(
-      '/',
+      "/",
       Object.assign(routerInfoOption, {
         method: routerFunction,
         url: path,
-      })
+      }),
     );
   }
 
@@ -129,8 +129,8 @@ export class EventService {
     if (this.eventMap.has(event)) {
       throw new DuplicateEventError(
         event,
-        this.eventMap.get(event).handlerName,
-        eventInfo.handlerName
+        this.eventMap.get(event)!.handlerName,
+        eventInfo.handlerName,
       );
     }
     this.eventMap.set(event, eventInfo);

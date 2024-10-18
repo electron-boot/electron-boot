@@ -22,11 +22,11 @@ type ConvertString<T extends Convertable, Group extends string> = {
  */
 export function registerErrorCode<T extends Convertable, G extends string>(
   errorGroup: G,
-  errorCodeMapping: T
+  errorCodeMapping: T,
 ): ConvertString<T, G> {
   if (codeGroup.has(errorGroup)) {
     throw new BasicError(
-      `Error group ${errorGroup} is duplicated, please check before adding.`
+      `Error group ${errorGroup} is duplicated, please check before adding.`,
     );
   } else {
     codeGroup.add(errorGroup);
@@ -36,7 +36,7 @@ export function registerErrorCode<T extends Convertable, G extends string>(
   for (const errKey in errorCodeMapping) {
     newCodeEnum[errKey as string] =
       errorGroup.toUpperCase() +
-      '_' +
+      "_" +
       String(errorCodeMapping[errKey]).toUpperCase();
   }
   return newCodeEnum as ConvertString<T, G>;
@@ -44,15 +44,15 @@ export function registerErrorCode<T extends Convertable, G extends string>(
 
 export class BasicError extends Error {
   code: number | string;
-  cause: Error;
+  override cause: Error | undefined;
 
   constructor(message: string, options?: ErrorOption);
   constructor(message: string, code: string, options?: ErrorOption);
   constructor(message: string, code: any, options?: ErrorOption) {
     super(message);
-    if (!code || typeof code === 'object') {
+    if (!code || typeof code === "object") {
       options = code;
-      code = 'MIDWAY_10000';
+      code = "MIDWAY_10000";
     }
     this.name = this.constructor.name;
     this.code = code;

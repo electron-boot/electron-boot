@@ -1,4 +1,5 @@
-import {
+import { EventEmitter } from "node:events";
+import type {
   IApplicationContext,
   IFileDetector,
   IIdentifierRelationShip,
@@ -12,18 +13,15 @@ import {
   ObjectCreatedOptions,
   ObjectIdentifier,
   ObjectInitOptions,
-  ObjectLifeCycleEvent,
-  ScopeEnum,
-} from '../interface';
-import { EventEmitter } from 'events';
+} from "../interface";
+import { ObjectLifeCycleEvent, ScopeEnum } from "../interface";
 import {
   CONTAINER_OBJ_SCOPE,
   FUNCTION_INJECT_KEY,
   REQUEST_CTX_KEY,
   SINGLETON_CONTAINER_CTX,
-} from '../constant';
-import { ObjectDefinitionRegistry } from './definition.registry';
-import * as Types from '../utils/types.util';
+} from "../constant";
+import * as Types from "../utils/types.util";
 import {
   CONFIGURATION_KEY,
   getClassExtendedMetadata,
@@ -37,26 +35,27 @@ import {
   MAIN_MODULE_KEY,
   saveModule,
   saveProviderId,
-} from '../decorators/decorator.manager';
-import * as Strings from '../utils/string.util';
-import { ObjectDefinition } from '../definitions/object.definition';
-import { FunctionDefinition } from '../definitions/function.definition';
+} from "../decorators/decorator.manager";
+import * as Strings from "../utils/string.util";
+import { ObjectDefinition } from "../definitions/object.definition";
+import { FunctionDefinition } from "../definitions/function.definition";
+import { DefinitionNotFoundError } from "../error/framework";
+import type {
+  IComponentInfo,
+  InjectionConfigurationOptions,
+} from "../decorators/configuration.decorator";
+import { ConfigService } from "../service/config.service";
+import { EnvironmentService } from "../service/environment.service";
+import { FunctionalConfiguration } from "../functional/configuration";
 import {
   ManagedReference,
   ManagedResolverFactory,
-} from './managed.resolver.factory';
-import { DefinitionNotFoundError } from '../error/framework';
-import {
-  IComponentInfo,
-  InjectionConfigurationOptions,
-} from '../decorators/configuration.decorator';
-import { ConfigService } from '../service/config.service';
-import { EnvironmentService } from '../service/environment.service';
-import { FunctionalConfiguration } from '../functional/configuration';
+} from "./managed.resolver.factory";
+import { ObjectDefinitionRegistry } from "./definition.registry";
 
 class ContainerConfiguration {
   private loadedMap = new WeakMap();
-  private namespaceList = [];
+  private namespaceList: string[] = [];
   private configurationOptionsList: Array<InjectionConfigurationOptions> = [];
   constructor(readonly container: IApplicationContext) {}
 
@@ -82,7 +81,7 @@ class ContainerConfiguration {
         // 普通类写法
         configurationOptions = getClassMetadata(
           CONFIGURATION_KEY,
-          configurationExport
+          configurationExport,
         );
       }
 
@@ -113,6 +112,7 @@ class ContainerConfiguration {
     importConfigs:
       | Array<{ [environmentName: string]: Record<string, any> }>
       | Record<string, any>
+      | undefined,
   ) {
     if (importConfigs) {
       if (Array.isArray(importConfigs)) {
@@ -124,7 +124,9 @@ class ContainerConfiguration {
   }
 
   addImportConfigFilter(
-    importConfigFilter: (config: Record<string, any>) => Record<string, any>
+    importConfigFilter:
+      | ((config: Record<string, any>) => Record<string, any>)
+      | undefined,
   ) {
     if (importConfigFilter) {
       this.container.get(ConfigService).addFilter(importConfigFilter);
@@ -135,17 +137,17 @@ class ContainerConfiguration {
     // 处理 imports
     for (let importPackage of imports) {
       if (!importPackage) continue;
-      if (typeof importPackage === 'string') {
+      if (typeof importPackage === "string") {
         importPackage = require(importPackage);
       }
-      if ('Configuration' in importPackage) {
+      if ("Configuration" in importPackage) {
         // component is object
         this.load(importPackage);
-      } else if ('component' in importPackage) {
+      } else if ("component" in importPackage) {
         if ((importPackage as IComponentInfo)?.enabledEnvironment) {
           if (
             (importPackage as IComponentInfo)?.enabledEnvironment?.includes(
-              this.container.get(EnvironmentService).getCurrentEnvironment()
+              this.container.get(EnvironmentService).getCurrentEnvironment(),
             )
           ) {
             this.load((importPackage as IComponentInfo).component);
@@ -167,7 +169,7 @@ class ContainerConfiguration {
     if (objs) {
       const keys = Object.keys(objs);
       for (const key of keys) {
-        if (typeof objs[key] !== undefined) {
+        if (typeof objs[key] !== "undefined") {
           this.container.registerObject(key, objs[key]);
         }
       }
@@ -179,7 +181,7 @@ class ContainerConfiguration {
       // 函数式写法不需要绑定到容器
     } else {
       // 普通类写法
-      saveProviderId(undefined, clzz);
+      saveProviderId(undefined as ObjectIdentifier, clzz);
       const id = getProviderUUId(clzz);
       this.container.bind(id, clzz, {
         namespace: namespace,
@@ -189,7 +191,7 @@ class ContainerConfiguration {
 
     // configuration 手动绑定去重
     const configurationMods = listModule(CONFIGURATION_KEY);
-    const exists = configurationMods.find(mod => {
+    const exists = configurationMods.find((mod) => {
       return mod.target === clzz;
     });
     if (!exists) {
@@ -201,7 +203,7 @@ class ContainerConfiguration {
   }
 
   private getConfigurationExport(exports): any[] {
-    const mods = [];
+    const mods: any[] = [];
     if (
       Types.isClass(exports) ||
       Types.isFunction(exports) ||
@@ -235,23 +237,23 @@ class ContainerConfiguration {
 export class GenericApplicationContext
   implements IApplicationContext, IModuleStore
 {
-  private _resolverFactory: ManagedResolverFactory = null;
-  private _identifierMapping = null;
-  private moduleMap = null;
-  private _objectCreateEventTarget: EventEmitter;
+  private _resolverFactory: ManagedResolverFactory | null = null;
+  private _identifierMapping: IIdentifierRelationShip | null = null;
+  private moduleMap: Map<ObjectIdentifier, Set<any>> | null = null;
+  private _objectCreateEventTarget: EventEmitter | null = null;
   public parent: IApplicationContext;
-  private _registry: IObjectDefinitionRegistry;
+  private _registry: IObjectDefinitionRegistry | null = null;
   protected ctx = SINGLETON_CONTAINER_CTX;
   private attrMap: Map<string, any> = new Map();
-  private _namespaceSet: Set<string> = null;
+  private _namespaceSet: Set<string> | null = null;
   private fileDetector: IFileDetector | false | undefined;
 
-  constructor(parent?: IApplicationContext) {
-    this.parent = parent;
+  constructor(parent?: IApplicationContext | undefined) {
+    this.parent = parent as IApplicationContext;
     this.init();
   }
 
-  protected init() {
+  protected init(): void {
     // 防止直接从applicationContext.getAsync or get对象实例时依赖当前上下文信息出错
     // ctx is in requestContainer
     this.registerObject(REQUEST_CTX_KEY, this.ctx);
@@ -264,7 +266,7 @@ export class GenericApplicationContext
     return this._identifierMapping;
   }
 
-  get objectCreateEventTarget() {
+  get objectCreateEventTarget(): EventEmitter | null {
     if (!this._objectCreateEventTarget) {
       this._objectCreateEventTarget = new EventEmitter();
     }
@@ -286,30 +288,28 @@ export class GenericApplicationContext
   }
 
   onBeforeBind(
-    fn: (args: any, options: ObjectBeforeBindOptions) => void
+    _fn: (args: any, options: ObjectBeforeBindOptions) => void,
   ): void {}
 
   onBeforeObjectCreated(
-    fn: (args: any, options: ObjectBeforeCreatedOptions) => void
+    _fn: (args: any, options: ObjectBeforeCreatedOptions) => void,
   ): void {}
 
-  onBeforeObjectDestroy<T>(
-    fn: <T>(ins: T, options: ObjectBeforeDestroyOptions) => void
+  onBeforeObjectDestroy(
+    _fn: <T>(ins: T, options: ObjectBeforeDestroyOptions) => void,
   ): void {}
 
-  onObjectCreated<T>(
-    fn: <T>(ins: T, options: ObjectCreatedOptions<T>) => void
+  onObjectCreated(
+    fn: (ins: unknown, options: ObjectCreatedOptions<unknown>) => void,
   ): void {
-    this.objectCreateEventTarget.on(ObjectLifeCycleEvent.AFTER_CREATED, fn);
+    this.objectCreateEventTarget?.on(ObjectLifeCycleEvent.AFTER_CREATED, fn);
   }
-
-  onObjectInit<T>(fn: <T>(ins: T, options: ObjectInitOptions) => void): void {}
 
   bind<T>(target: T, options?: Partial<IObjectDefinition>): void;
   bind<T>(
     identifier: ObjectIdentifier,
     target: T,
-    options?: Partial<IObjectDefinition>
+    options?: Partial<IObjectDefinition>,
   ): void;
   bind(identifier: any, target: any, options?: any): void {
     if (Types.isClass(identifier) || Types.isFunction(identifier)) {
@@ -338,7 +338,7 @@ export class GenericApplicationContext
     definition.path = target;
     definition.id = identifier;
     definition.srcPath = options?.srcPath || null;
-    definition.namespace = options?.namespace || '';
+    definition.namespace = options?.namespace || "";
     definition.scope = options?.scope || ScopeEnum.Request;
     definition.createFrom = options?.createFrom;
 
@@ -350,14 +350,14 @@ export class GenericApplicationContext
       const refManaged = new ManagedReference();
       refManaged.args = propertyMeta.args;
       refManaged.name = propertyMeta.value as any;
-      refManaged.injectMode = propertyMeta['injectMode'];
-      definition.properties.set(propertyMeta['targetKey'], refManaged);
+      refManaged.injectMode = propertyMeta["injectMode"];
+      definition.properties.set(propertyMeta["targetKey"], refManaged);
     }
 
     // inject custom properties
     const customProps = getClassExtendedMetadata(
       INJECT_CUSTOM_PROPERTY,
-      target
+      target,
     );
 
     for (const p in customProps) {
@@ -388,16 +388,16 @@ export class GenericApplicationContext
       definition.allowDowngrade = objDefOptions.allowDowngrade;
     }
 
-    this.objectCreateEventTarget.emit(
+    this.objectCreateEventTarget!.emit(
       ObjectLifeCycleEvent.BEFORE_BIND,
       target,
       {
         context: this,
         definition,
-        replaceCallback: newDefinition => {
+        replaceCallback: (newDefinition) => {
           definition = newDefinition;
         },
-      }
+      },
     );
 
     if (definition) {
@@ -405,7 +405,7 @@ export class GenericApplicationContext
     }
   }
 
-  protected bindModule(module: any, options: Partial<IObjectDefinition>) {
+  protected bindModule(module: any, options: Partial<IObjectDefinition>): void {
     if (Types.isClass(module)) {
       const providerId = getProviderUUId(module);
       if (providerId) {
@@ -445,35 +445,35 @@ export class GenericApplicationContext
 
   bindClass(exports: any, options?: Partial<IObjectDefinition>): void {
     if (Types.isClass(exports) || Types.isFunction(exports)) {
-      this.bindModule(exports, options);
+      this.bindModule(exports, options!);
     } else {
       for (const m in exports) {
         const module = exports[m];
         if (Types.isClass(module) || Types.isFunction(module)) {
-          this.bindModule(module, options);
+          this.bindModule(module, options!);
         }
       }
     }
   }
 
   createChild(): IApplicationContext {
-    return undefined;
+    return undefined as unknown as IApplicationContext;
   }
 
   get<T>(
     identifier: { new (...args: any[]): T },
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): T;
   get<T>(
     identifier: ObjectIdentifier,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): T;
-  get<T>(identifier, args?: any[], objectContext?: ObjectContext): T {
+  get<T>(identifier: any, args?: any[], objectContext?: ObjectContext): T {
     args = args ?? [];
     objectContext = objectContext ?? { originName: identifier };
-    if (typeof identifier !== 'string') {
+    if (typeof identifier !== "string") {
       objectContext.originName = identifier.name;
       identifier = this.getIdentifier(identifier);
     }
@@ -486,7 +486,7 @@ export class GenericApplicationContext
     }
     if (!definition) {
       throw new DefinitionNotFoundError(
-        objectContext?.originName ?? identifier
+        objectContext?.originName ?? identifier,
       );
     }
     return this.getManagedResolverFactory().create({ definition, args });
@@ -495,21 +495,21 @@ export class GenericApplicationContext
   getAsync<T>(
     identifier: { new (...args: any[]): T },
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): Promise<T>;
   getAsync<T>(
     identifier: ObjectIdentifier,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): Promise<T>;
   getAsync(
     identifier: any,
     args?: any[],
-    objectContext?: ObjectContext
+    objectContext?: ObjectContext,
   ): Promise<any> {
     args = args ?? [];
     objectContext = objectContext ?? { originName: identifier };
-    if (typeof identifier !== 'string') {
+    if (typeof identifier !== "string") {
       objectContext.originName = identifier.name;
       identifier = this.getIdentifier(identifier);
     }
@@ -524,7 +524,7 @@ export class GenericApplicationContext
 
     if (!definition) {
       throw new DefinitionNotFoundError(
-        objectContext?.originName ?? identifier
+        objectContext?.originName ?? identifier,
       );
     }
 
@@ -535,11 +535,11 @@ export class GenericApplicationContext
     return this.attrMap.get(key);
   }
 
-  protected getIdentifier(target: any) {
+  protected getIdentifier(target: any): ObjectIdentifier {
     return getProviderUUId(target);
   }
 
-  protected getManagedResolverFactory() {
+  protected getManagedResolverFactory(): ManagedResolverFactory {
     if (!this._resolverFactory) {
       this._resolverFactory = new ManagedResolverFactory(this);
     }
@@ -561,7 +561,7 @@ export class GenericApplicationContext
     return this.registry.hasDefinition(identifier);
   }
 
-  transformModule(moduleMap: Map<string, Set<any>>) {
+  transformModule(moduleMap: Map<string, Set<any>>): void {
     this.moduleMap = new Map(moduleMap);
   }
 
@@ -574,7 +574,7 @@ export class GenericApplicationContext
   }
 
   listModule(key: ObjectIdentifier): any[] {
-    return Array.from(this.moduleMap.get(key) || {});
+    return Array.from(this.moduleMap?.get(key) || []);
   }
 
   load(module: any): void {
@@ -598,7 +598,7 @@ export class GenericApplicationContext
 
     // find user code configuration it's without namespace
     const userCodeConfiguration =
-      configurationOptionsList.find(options => !options.namespace) ?? {};
+      configurationOptionsList.find((options) => !options.namespace) ?? {};
 
     this.fileDetector = userCodeConfiguration.detector ?? this.fileDetector;
 
@@ -619,10 +619,10 @@ export class GenericApplicationContext
   }
 
   saveModule(key: ObjectIdentifier, module: any): void {
-    if (!this.moduleMap.has(key)) {
-      this.moduleMap.set(key, new Set());
+    if (!this.moduleMap!.has(key)) {
+      this.moduleMap!.set(key, new Set());
     }
-    this.moduleMap.get(key).add(module);
+    this.moduleMap?.get(key)?.add(module);
   }
 
   setAttr(key: string, value: any): void {
@@ -632,4 +632,6 @@ export class GenericApplicationContext
   stop(): Promise<void> {
     return Promise.resolve(undefined);
   }
+
+  onObjectInit(_fn: <T>(ins: T, options: ObjectInitOptions) => void): void {}
 }

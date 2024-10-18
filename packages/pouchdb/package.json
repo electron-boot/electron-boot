@@ -1,19 +1,27 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "1.0.2",
-  "description": "",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "version": "2.1.0",
+  "description": "pouchdb for electron-boot",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "import": "./dist/esm/index.mjs",
+    "require": "./dist/cjs/index.cjs"
+  },
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "build": "tsc"
-  },
   "files": [
-    "lib/**/*.js",
-    "lib/**/*.d.ts"
+    "dist"
   ],
+  "scripts": {
+    "lint": "eslint --cache --ext .ts -c eslint.config.mjs src/**",
+    "format": "prettier --write --cache --parser typescript \"src/**/*.ts\"",
+    "dev": "rollup -c rollup.config.ts --configPlugin typescript -w",
+    "build": "rollup -c rollup.config.ts --configPlugin typescript "
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/electron-boot/electron-boot.git"
@@ -30,7 +38,7 @@
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
   "peerDependencies": {
-    "@electron-boot/framework": "^2.0.9",
+    "@electron-boot/framework": "workspace:*",
     "pouchdb": "^9.0.0"
   },
   "dependencies": {

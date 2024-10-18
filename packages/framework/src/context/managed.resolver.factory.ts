@@ -1,33 +1,32 @@
-import * as EventEmitter from 'events';
-import {
+import type * as EventEmitter from "node:events";
+import type {
   IApplicationContext,
   IManagedInstance,
   IManagedResolver,
   IManagedResolverFactoryCreateOptions,
-  InjectMode,
   IObjectDefinition,
   ObjectIdentifier,
-  ObjectLifeCycleEvent,
-  ScopeEnum,
-} from '../interface';
+} from "../interface";
+import { InjectMode, ObjectLifeCycleEvent, ScopeEnum } from "../interface";
 import {
   CONTAINER_OBJ_SCOPE,
   KEYS,
   REQUEST_CTX_KEY,
   REQUEST_OBJ_CTX_KEY,
   SINGLETON_CONTAINER_CTX,
-} from '../constant';
+} from "../constant";
 import {
   CommonError,
   MissingImportComponentError,
   ResolverMissingError,
   SingletonInjectRequestError,
-} from '../error/framework';
+} from "../error/framework";
+import { isFunction } from "../utils";
 
 export class ManagedReference implements IManagedInstance {
   type = KEYS.REF_ELEMENT;
-  name: string;
-  injectMode: InjectMode;
+  name: string | undefined;
+  injectMode: InjectMode | undefined;
   args?: any;
 }
 
@@ -45,7 +44,7 @@ class RefResolver {
     if (
       mr.injectMode === InjectMode.Class &&
       !(this.factory.context.parent ?? this.factory.context).hasDefinition(
-        mr.name
+        mr.name,
       )
     ) {
       throw new MissingImportComponentError(originName);
@@ -57,13 +56,13 @@ class RefResolver {
 
   async resolveAsync(
     managed: IManagedInstance,
-    originName: string
+    originName: string,
   ): Promise<any> {
     const mr = managed as ManagedReference;
     if (
       mr.injectMode === InjectMode.Class &&
       !(this.factory.context.parent ?? this.factory.context).hasDefinition(
-        mr.name
+        mr.name,
       )
     ) {
       throw new MissingImportComponentError(originName);
@@ -92,7 +91,7 @@ export class ManagedResolverFactory {
     };
   }
 
-  registerResolver(resolver: IManagedResolver) {
+  registerResolver(resolver: IManagedResolver): void {
     this.resolvers[resolver.type] = resolver;
   }
 
@@ -106,7 +105,7 @@ export class ManagedResolverFactory {
 
   async resolveManagedAsync(
     managed: IManagedInstance,
-    originPropertyName: string
+    originPropertyName: string,
   ): Promise<any> {
     const resolver = this.resolvers[managed.type];
     if (!resolver || resolver.type !== managed.type) {
@@ -143,11 +142,10 @@ export class ManagedResolverFactory {
 
     const Clzz = definition.creator.load();
 
-    let constructorArgs = [];
+    let constructorArgs: any[] = [];
     if (args && Array.isArray(args) && args.length > 0) {
       constructorArgs = args;
     }
-
     this.getObjectEventTarget().emit(
       ObjectLifeCycleEvent.BEFORE_CREATED,
       Clzz,
@@ -155,7 +153,7 @@ export class ManagedResolverFactory {
         constructorArgs,
         definition,
         context: this.context,
-      }
+      },
     );
 
     inst = definition.creator.doConstruct(Clzz, constructorArgs, this.context);
@@ -163,7 +161,7 @@ export class ManagedResolverFactory {
     // binding ctx object
     if (
       definition.isRequestScope() &&
-      definition.constructor.name === 'ObjectDefinition'
+      definition.constructor.name === "ObjectDefinition"
     ) {
       Object.defineProperty(inst, REQUEST_OBJ_CTX_KEY, {
         value: this.context.get(REQUEST_CTX_KEY),
@@ -192,7 +190,7 @@ export class ManagedResolverFactory {
     this.getObjectEventTarget().emit(ObjectLifeCycleEvent.AFTER_CREATED, inst, {
       context: this.context,
       definition,
-      replaceCallback: ins => {
+      replaceCallback: (ins) => {
         inst = ins;
       },
     });
@@ -204,7 +202,6 @@ export class ManagedResolverFactory {
       context: this.context,
       definition,
     });
-
     if (definition.id) {
       if (definition.isSingletonScope()) {
         this.singletonCache.set(definition.id, inst);
@@ -228,6 +225,9 @@ export class ManagedResolverFactory {
    */
   async createAsync(opt: IManagedResolverFactoryCreateOptions): Promise<any> {
     const { definition, args } = opt;
+    if (!isFunction(definition.isSingletonScope)) {
+      console.log(definition);
+    }
     if (
       definition.isSingletonScope() &&
       this.singletonCache.has(definition.id)
@@ -250,7 +250,7 @@ export class ManagedResolverFactory {
     }
 
     const Clzz = definition.creator.load();
-    let constructorArgs = [];
+    let constructorArgs: any[] = [];
     if (args && Array.isArray(args) && args.length > 0) {
       constructorArgs = args;
     }
@@ -261,13 +261,13 @@ export class ManagedResolverFactory {
       {
         constructorArgs,
         context: this.context,
-      }
+      },
     );
 
     inst = await definition.creator.doConstructAsync(
       Clzz,
       constructorArgs,
-      this.context
+      this.context,
     );
     if (!inst) {
       this.removeCreateStatus(definition, false);
@@ -277,7 +277,7 @@ export class ManagedResolverFactory {
     // binding ctx object
     if (
       definition.isRequestScope() &&
-      definition.constructor.name === 'ObjectDefinition'
+      definition.constructor.name === "ObjectDefinition"
     ) {
       // set related ctx
       Object.defineProperty(inst, REQUEST_OBJ_CTX_KEY, {
@@ -294,7 +294,7 @@ export class ManagedResolverFactory {
         try {
           inst[key] = await this.resolveManagedAsync(
             definition.properties.get(key),
-            key
+            key,
           );
         } catch (error) {
           // if (MidwayDefinitionNotFoundError.isClosePrototypeOf(error)) {
@@ -310,7 +310,7 @@ export class ManagedResolverFactory {
     this.getObjectEventTarget().emit(ObjectLifeCycleEvent.AFTER_CREATED, inst, {
       context: this.context,
       definition,
-      replaceCallback: ins => {
+      replaceCallback: (ins) => {
         inst = ins;
       },
     });
@@ -351,7 +351,7 @@ export class ManagedResolverFactory {
           {
             context: this.context,
             definition,
-          }
+          },
         );
         await definition.creator.doDestroyAsync(inst);
       }
@@ -367,7 +367,7 @@ export class ManagedResolverFactory {
    */
   private removeCreateStatus(
     definition: IObjectDefinition,
-    success: boolean
+    _success: boolean,
   ): boolean {
     // 如果map中存在表示需要设置状态
     if (this.creating.has(definition.id)) {
@@ -376,7 +376,7 @@ export class ManagedResolverFactory {
     return true;
   }
 
-  public isCreating(definition: IObjectDefinition) {
+  public isCreating(definition: IObjectDefinition): boolean | undefined {
     return this.creating.has(definition.id) && this.creating.get(definition.id);
   }
 
@@ -402,7 +402,7 @@ export class ManagedResolverFactory {
       return new Proxy(
         { __is_proxy__: true, __target_id__: definition.id },
         {
-          get: (obj, prop) => {
+          get: (_obj: any, prop: string | symbol) => {
             let target;
             if (definition.isRequestScope()) {
               target = this.context.registry.getObject(definition.id);
@@ -413,7 +413,7 @@ export class ManagedResolverFactory {
             }
 
             if (target) {
-              if (typeof target[prop] === 'function') {
+              if (typeof target[prop] === "function") {
                 return target[prop].bind(target);
               }
               return target[prop];
@@ -421,7 +421,7 @@ export class ManagedResolverFactory {
 
             return undefined;
           },
-        }
+        },
       );
     }
     return null;
@@ -435,7 +435,7 @@ export class ManagedResolverFactory {
   public depthFirstSearch(
     identifier: string,
     definition: IObjectDefinition,
-    depth?: string[]
+    depth?: string[],
   ): boolean {
     if (definition) {
       if (definition.properties) {
@@ -476,9 +476,9 @@ export class ManagedResolverFactory {
 
   private getObjectEventTarget(): EventEmitter {
     if (this.context.parent) {
-      return this.context.parent.objectCreateEventTarget;
+      return this.context.parent.objectCreateEventTarget!;
     }
-    return this.context.objectCreateEventTarget;
+    return this.context.objectCreateEventTarget!;
   }
 
   private checkSingletonInvokeRequest(definition, key) {
@@ -486,7 +486,7 @@ export class ManagedResolverFactory {
       const managedRef = definition.properties.get(key);
       if (this.context.hasDefinition(managedRef?.name)) {
         const propertyDefinition = this.context.registry.getDefinition(
-          managedRef.name
+          managedRef.name,
         );
         if (
           propertyDefinition.isRequestScope() &&
@@ -494,7 +494,7 @@ export class ManagedResolverFactory {
         ) {
           throw new SingletonInjectRequestError(
             definition.path.name,
-            propertyDefinition.path.name
+            propertyDefinition.path.name,
           );
         }
       }
@@ -503,7 +503,7 @@ export class ManagedResolverFactory {
   }
 
   private setInstanceScope(inst, scope: ScopeEnum) {
-    if (typeof inst === 'object') {
+    if (typeof inst === "object") {
       if (
         scope === ScopeEnum.Request &&
         inst[REQUEST_OBJ_CTX_KEY] === SINGLETON_CONTAINER_CTX

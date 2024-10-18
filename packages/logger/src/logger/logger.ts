@@ -1,19 +1,20 @@
-import * as util from 'util';
-import { format } from 'winston';
-import { Transport, WinstonLogger } from '../winston/logger';
-import {
+import * as util from "node:util";
+import { format } from "winston";
+import type { Format } from "logform";
+import type { Transport } from "../winston/logger";
+import { WinstonLogger } from "../winston/logger";
+import type {
   IGenericChildLogger,
   IGenericContextLogger,
   IGenericLogger,
   Level,
   LoggerOptions,
-} from '../interface';
-import { formatLevel, isPlainObject } from '../utils';
-import { ORIGIN_ARGS, ORIGIN_ERROR } from '../constant';
-import { displayCommonMessage, displayLabels } from '../fomat';
-import { Format } from 'logform';
+} from "../interface";
+import { formatLevel, isPlainObject } from "../utils";
+import { ORIGIN_ARGS, ORIGIN_ERROR } from "../constant";
+import { displayCommonMessage, displayLabels } from "../fomat";
 
-export const LogLevels = {
+export const LogLevels: { [key: string]: number } = {
   off: 0,
   error: 1,
   warn: 2,
@@ -31,11 +32,11 @@ export class GenericLogger extends WinstonLogger implements IGenericLogger {
 
   protected _metadata: Record<string, unknown> | undefined;
 
-  set level(level: Level) {
+  setLevel(level: Level): void {
     this._level = formatLevel(level);
   }
 
-  get level(): Level {
+  getLevel(): Level {
     return this._level;
   }
 
@@ -71,12 +72,12 @@ export class GenericLogger extends WinstonLogger implements IGenericLogger {
     super(
       Object.assign(options, {
         levels: LogLevels,
-      })
+      }),
     );
     // 设置日志等级
-    this._level = formatLevel(options.level ?? 'info');
+    this._level = formatLevel(options.level ?? "info");
     // 设置默认的标签
-    this.defaultLabel = options.name || '';
+    this.defaultLabel = options.name || "";
     // 元数据
     this.defaultMetadata = options.metadata || {};
     // 配置当前日志主体
@@ -89,7 +90,7 @@ export class GenericLogger extends WinstonLogger implements IGenericLogger {
   protected getDefaultFormat(): Format {
     return format.combine(
       format.timestamp({
-        format: 'YYYY-MM-DD HH:mm:ss,SSS',
+        format: "YYYY-MM-DD HH:mm:ss,SSS",
       }),
       format.splat(),
       displayCommonMessage({
@@ -97,11 +98,11 @@ export class GenericLogger extends WinstonLogger implements IGenericLogger {
         defaultMeta: this.defaultMetadata,
         target: this,
       }),
-      displayLabels()
+      displayLabels(),
     );
   }
 
-  protected log(level: string, ...args: any[]) {
+  protected log(level: string, ...args: any[]): void {
     // 拦截器，只有当要输出的日志等级小于当前日志等级的时候才进行记录，否则跳过
     if (LogLevels[level] > LogLevels[this._level]) return;
     const originArgs = [...args];
@@ -123,51 +124,51 @@ export class GenericLogger extends WinstonLogger implements IGenericLogger {
     return super.log(level, msg, meta);
   }
 
-  trace(...args: any[]) {
-    this.log('trace', ...args);
+  trace(...args: any[]): void {
+    this.log("trace", ...args);
   }
 
-  debug(...args: any[]) {
-    this.log('debug', ...args);
+  debug(...args: any[]): void {
+    this.log("debug", ...args);
   }
 
-  info(...args: any[]) {
-    this.log('info', ...args);
+  info(...args: any[]): void {
+    this.log("info", ...args);
   }
 
-  warn(...args: any[]) {
-    this.log('warn', ...args);
+  warn(...args: any[]): void {
+    this.log("warn", ...args);
   }
 
-  error(...args: any[]) {
-    this.log('error', ...args);
+  error(...args: any[]): void {
+    this.log("error", ...args);
   }
 
-  add(transport: Transport) {
+  add(transport: Transport): void {
     super.add(transport);
   }
 
-  remove(transport: Transport) {
+  remove(transport: Transport): void {
     super.remove(transport);
   }
 
   write(...args: any[]): boolean {
     if (
-      (args.length === 1 && typeof args[0] !== 'object') ||
-      !args[0]['level']
+      (args.length === 1 && typeof args[0] !== "object") ||
+      !args[0]["level"]
     ) {
       // 这里必须要用 none
-      return super.log.apply(this, ['trace', ...args, { ignoreFormat: true }]);
+      return super.log.apply(this, ["trace", ...args, { ignoreFormat: true }]);
     }
     return super.write.apply(this, args);
   }
 
-  close() {
+  close(): void {
     return super.close();
   }
 
   createChildLogger(
-    options: LoggerOptions = {} as LoggerOptions
+    options: LoggerOptions = {} as LoggerOptions,
   ): IGenericChildLogger {
     console.log(options);
     return null as any;

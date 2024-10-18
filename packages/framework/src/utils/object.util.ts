@@ -1,6 +1,6 @@
-import { isPlainObject } from './types.util';
+import { isNull, isPlainObject } from "./types.util";
 
-export function merge(target: any, src: any) {
+export function merge(target: any, src: any): any {
   if (!target) {
     target = src;
     src = null;
@@ -11,12 +11,12 @@ export function merge(target: any, src: any) {
   if (Array.isArray(target)) {
     return target.concat(src || []);
   }
-  if (typeof target === 'object') {
+  if (typeof target === "object") {
     return Object.assign({}, target, src);
   }
-  throw new Error('can not merge meta that type of ' + typeof target);
+  throw new Error("can not merge meta that type of " + typeof target);
 }
-export function extend(...args): any {
+export function extend(...args: any[]): any {
   let options, name, src, copy, clone;
   let target = args[0];
   let i = 1;
@@ -24,13 +24,13 @@ export function extend(...args): any {
   let deep = false;
 
   // Handle a deep copy situation
-  if (typeof target === 'boolean') {
+  if (typeof target === "boolean") {
     deep = target;
     target = args[1] || {};
     // skip the boolean and the target
     i = 2;
   } else if (
-    (typeof target !== 'object' && typeof target !== 'function') ||
+    (typeof target !== "object" && typeof target !== "function") ||
     target == null
   ) {
     target = {};
@@ -43,7 +43,7 @@ export function extend(...args): any {
 
     // Extend the base object
     for (name in options) {
-      if (name === '__proto__') continue;
+      if (name === "__proto__") continue;
 
       src = target[name];
       copy = options[name];
@@ -58,7 +58,7 @@ export function extend(...args): any {
         target[name] = extend(deep, clone, copy);
 
         // Don't bring in undefined values
-      } else if (typeof copy !== 'undefined') {
+      } else if (typeof copy !== "undefined") {
         target[name] = copy;
       }
     }
@@ -78,22 +78,22 @@ export function extend(...args): any {
  */
 export function safelyGet(
   list: string | string[],
-  obj?: Record<string, unknown>
+  obj?: Record<string, unknown>,
 ): any {
   if (arguments.length === 1) {
     return (_obj: Record<string, unknown>) => safelyGet(list, _obj);
   }
 
-  if (typeof obj === 'undefined' || typeof obj !== 'object' || obj === null) {
+  if (typeof obj === "undefined" || typeof obj !== "object" || isNull(obj)) {
     return void 0;
   }
-  const pathArrValue = typeof list === 'string' ? list.split('.') : list;
+  const pathArrValue = typeof list === "string" ? list.split(".") : list;
   let willReturn: any = obj;
 
   for (const key of pathArrValue) {
-    if (typeof willReturn === 'undefined' || willReturn === null) {
+    if (typeof willReturn === "undefined" || isNull(willReturn)) {
       return void 0;
-    } else if (typeof willReturn !== 'object') {
+    } else if (typeof willReturn !== "object") {
       return void 0;
     }
     willReturn = willReturn[key];

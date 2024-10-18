@@ -1,13 +1,13 @@
-import { Init, Singleton } from '../decorators/definitions.decorator';
-import { Autowired } from '../decorators/autowired.decorator';
-import { AppInfo, IConfigService } from '../interface';
-import { EnvironmentService } from './environment.service';
-import { readdirSync, statSync } from 'fs';
-import { basename, join } from 'path';
-import { isFunction } from '../utils/types.util';
-import { InvalidConfigError } from '../error/framework';
-import { safelyGet, extend } from '../utils/object.util';
-import { app } from 'electron';
+import { Init, Singleton } from "../decorators/definitions.decorator";
+import { Autowired } from "../decorators/autowired.decorator";
+import type { AppInfo, IConfigService } from "../interface";
+import type { EnvironmentService } from "./environment.service";
+import { readdirSync, statSync } from "fs";
+import { basename, join } from "path";
+import { isFunction } from "../utils/types.util";
+import { InvalidConfigError } from "../error/framework";
+import { extend, safelyGet } from "../utils/object.util";
+import { app } from "electron";
 
 interface ConfigMergeInfo {
   value: any;
@@ -19,37 +19,37 @@ interface ConfigMergeInfo {
 export class ConfigService implements IConfigService {
   private envDirMap: Map<string, Set<any>> = new Map();
   private aliasMap = {
-    prod: 'production',
-    unittest: 'test',
+    prod: "production",
+    unittest: "test",
   };
   private configMergeOrder: Array<ConfigMergeInfo> = [];
   protected configuration = {};
   protected isReady = false;
   protected externalObject: Record<string, unknown>[] = [];
-  protected appInfo: AppInfo;
+  protected appInfo!: AppInfo;
   protected configFilterList: Array<
-    (config: Record<string, any>) => Record<string, any> | undefined
+    (config: Record<string, any>) => Record<string, any>
   > = [];
 
   @Autowired()
-  protected environmentService: EnvironmentService;
+  protected environmentService!: EnvironmentService;
 
   @Init()
-  protected init() {
+  protected init(): void {
     this.appInfo = {
       runnerPath: this.environmentService.isDevelopment()
         ? process.cwd()
         : app.getAppPath(),
       name: app.getName(),
       version: app.getVersion(),
-      HOME: app.getPath('home'),
+      HOME: app.getPath("home"),
       env: this.environmentService.getCurrentEnvironment(),
     };
   }
 
-  public add(configFilePaths: any[]) {
+  public add(configFilePaths: any[]): void {
     for (const dir of configFilePaths) {
-      if (typeof dir === 'string') {
+      if (typeof dir === "string") {
         if (/\.\w+$/.test(dir)) {
           // file
           const env = this.getConfigEnv(dir);
@@ -64,9 +64,9 @@ export class ConfigService implements IConfigService {
           if (fileStat.isDirectory()) {
             const files = readdirSync(dir);
             this.add(
-              files.map(file => {
+              files.map((file) => {
                 return join(dir, file);
-              })
+              }),
             );
           }
         }
@@ -82,7 +82,7 @@ export class ConfigService implements IConfigService {
     }
   }
 
-  public addObject(obj: Record<string, unknown>, reverse = false) {
+  public addObject(obj: Record<string, unknown>, reverse = false): void {
     if (this.isReady) {
       obj = this.runWithFilter(obj);
 
@@ -90,8 +90,8 @@ export class ConfigService implements IConfigService {
         return;
       }
       this.configMergeOrder.push({
-        env: 'default',
-        extraPath: '',
+        env: "default",
+        extraPath: "",
         value: obj,
       });
       if (reverse) {
@@ -104,31 +104,31 @@ export class ConfigService implements IConfigService {
     }
   }
 
-  private getEnvSet(env) {
+  private getEnvSet(env): Set<any> {
     if (!this.envDirMap.has(env)) {
       this.envDirMap.set(env, new Set());
     }
-    return this.envDirMap.get(env);
+    return this.envDirMap.get(env)!;
   }
 
-  private getConfigEnv(configFilePath) {
+  private getConfigEnv(configFilePath): string {
     // parse env
     const configFileBaseName = basename(configFilePath);
-    const splits = configFileBaseName.split('.');
-    const suffix = splits.pop();
-    if (suffix !== 'js' && suffix !== 'ts') {
+    const splits = configFileBaseName.split(".");
+    const suffix = splits.pop()!;
+    if (suffix !== "js" && suffix !== "ts") {
       return suffix;
     }
-    return splits.pop();
+    return splits.pop()!;
   }
 
-  public load() {
+  public load(): void {
     if (this.isReady) return;
     // get default
-    const defaultSet = this.getEnvSet('default');
+    const defaultSet = this.getEnvSet("default");
     // get current set
     const currentEnvSet = this.getEnvSet(
-      this.environmentService.getCurrentEnvironment()
+      this.environmentService.getCurrentEnvironment(),
     );
     // merge set
     const target = {};
@@ -136,7 +136,6 @@ export class ConfigService implements IConfigService {
     for (const [idx, filename] of [...defaultSet, ...currentEnvSet].entries()) {
       let config: Record<string, any> = this.loadConfig(filename);
       if (isFunction(config)) {
-        // eslint-disable-next-line prefer-spread
         config = config.apply(null, [this.appInfo, target]);
       }
 
@@ -153,7 +152,7 @@ export class ConfigService implements IConfigService {
       this.configMergeOrder.push({
         env:
           idx < defaultSetLength
-            ? 'default'
+            ? "default"
             : this.environmentService.getCurrentEnvironment(),
         extraPath: filename,
         value: config,
@@ -170,8 +169,8 @@ export class ConfigService implements IConfigService {
           }
           extend(true, target, externalObject);
           this.configMergeOrder.push({
-            env: 'default',
-            extraPath: '',
+            env: "default",
+            extraPath: "",
             value: externalObject,
           });
         }
@@ -181,7 +180,7 @@ export class ConfigService implements IConfigService {
     this.isReady = true;
   }
 
-  public getConfiguration(configKey?: string) {
+  public getConfiguration(configKey?: string): any {
     if (configKey) {
       return safelyGet(configKey, this.configuration);
     }
@@ -193,10 +192,10 @@ export class ConfigService implements IConfigService {
   }
 
   private loadConfig(
-    configFilename
+    configFilename,
   ): (...args) => any | Record<string, unknown> {
     let exports =
-      typeof configFilename === 'string'
+      typeof configFilename === "string"
         ? require(configFilename)
         : configFilename;
 
@@ -205,7 +204,7 @@ export class ConfigService implements IConfigService {
       if (exports && exports.default) {
         if (Object.keys(exports).length > 1) {
           throw new InvalidConfigError(
-            `${configFilename} should not have both a default export and named export`
+            `${configFilename} should not have both a default export and named export`,
           );
         }
         exports = exports.default;
@@ -215,11 +214,11 @@ export class ConfigService implements IConfigService {
     return exports;
   }
 
-  public clearAllConfig() {
+  public clearAllConfig(): void {
     this.configuration = {};
   }
 
-  public clearConfigMergeOrder() {
+  public clearConfigMergeOrder(): void {
     this.configMergeOrder.length = 0;
   }
 
@@ -228,8 +227,8 @@ export class ConfigService implements IConfigService {
    * @param filter
    */
   public addFilter(
-    filter: (config: Record<string, any>) => Record<string, any>
-  ) {
+    filter: (config: Record<string, any>) => Record<string, any>,
+  ): void {
     this.configFilterList.push(filter);
   }
 
@@ -240,7 +239,7 @@ export class ConfigService implements IConfigService {
     return config;
   }
 
-  public getAppInfo() {
+  public getAppInfo(): AppInfo {
     return this.appInfo;
   }
 }

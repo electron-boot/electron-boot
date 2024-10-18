@@ -1,5 +1,5 @@
-import { InjectionConfigurationOptions } from '../decorators/configuration.decorator';
-import { IApplicationContext } from '../interface';
+import type { InjectionConfigurationOptions } from "../decorators/configuration.decorator";
+import type { IApplicationContext } from "../interface";
 
 export class FunctionalConfiguration {
   private readyHandler;
@@ -19,9 +19,9 @@ export class FunctionalConfiguration {
   onConfigLoad(
     configLoadHandler:
       | ((container: IApplicationContext) => any)
-      | IApplicationContext
-  ) {
-    if (typeof configLoadHandler === 'function') {
+      | IApplicationContext,
+  ): this {
+    if (typeof configLoadHandler === "function") {
       this.configLoadHandler = configLoadHandler;
     } else {
       return this.configLoadHandler(configLoadHandler);
@@ -32,9 +32,9 @@ export class FunctionalConfiguration {
   onReady(
     readyHandler:
       | ((container: IApplicationContext) => void)
-      | IApplicationContext
-  ) {
-    if (typeof readyHandler === 'function') {
+      | IApplicationContext,
+  ): this {
+    if (typeof readyHandler === "function") {
       this.readyHandler = readyHandler;
     } else {
       return this.readyHandler(readyHandler);
@@ -45,9 +45,9 @@ export class FunctionalConfiguration {
   onServerReady(
     serverReadyHandler:
       | ((container: IApplicationContext) => void)
-      | IApplicationContext
-  ) {
-    if (typeof serverReadyHandler === 'function') {
+      | IApplicationContext,
+  ): this {
+    if (typeof serverReadyHandler === "function") {
       this.serverReadyHandler = serverReadyHandler;
     } else {
       return this.serverReadyHandler(serverReadyHandler);
@@ -58,9 +58,9 @@ export class FunctionalConfiguration {
   onStop(
     stopHandler:
       | ((container: IApplicationContext) => void)
-      | IApplicationContext
-  ) {
-    if (typeof stopHandler === 'function') {
+      | IApplicationContext,
+  ): this {
+    if (typeof stopHandler === "function") {
       this.stopHandler = stopHandler;
     } else {
       return this.stopHandler(stopHandler);
@@ -68,11 +68,13 @@ export class FunctionalConfiguration {
     return this;
   }
 
-  getConfigurationOptions() {
+  getConfigurationOptions(): InjectionConfigurationOptions {
     return this.options;
   }
 }
 
-export const createConfiguration = (options: InjectionConfigurationOptions) => {
+export const createConfiguration = (
+  options: InjectionConfigurationOptions,
+): FunctionalConfiguration => {
   return new FunctionalConfiguration(options);
 };

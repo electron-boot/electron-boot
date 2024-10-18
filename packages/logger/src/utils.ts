@@ -1,4 +1,5 @@
-import { Level } from './interface';
+import type { Level } from "./interface";
+import { isEmpty } from "radash";
 
 /**
  * Convert str to Level
@@ -13,8 +14,8 @@ export function formatLevel(level: string): Level {
  * @param name
  * @param message
  */
-export function assertEmptyAndThrow(name: string, message: any) {
-  if (name === null || name === undefined) {
+export function assertEmptyAndThrow(name: string, message: any): void {
+  if (isEmpty(name)) {
     throw new Error(message);
   }
 }
@@ -42,8 +43,8 @@ export function assertConditionTruthy(...args: any[]): boolean {
  * @param str {string} - template str
  * @param data {Record<string,any>} - template data
  */
-export function template(str: string, data: Record<string, any>) {
-  return str.replace(/\${(.*?)}/g, (match, key) => data[key]);
+export function template(str: string, data: Record<string, any>): string {
+  return str.replace(/\$\{(.*?)\}/g, (_match: string, key: any) => data[key]);
 }
 const toStr = Object.prototype.toString;
 const hasOwn = Object.prototype.hasOwnProperty;
@@ -51,16 +52,16 @@ const hasOwn = Object.prototype.hasOwnProperty;
  * check target is plain object or not.
  * @param target
  */
-export function isPlainObject(target: any) {
-  if (!target || toStr.call(target) !== '[object Object]') {
+export function isPlainObject(target: any): boolean {
+  if (!target || toStr.call(target) !== "[object Object]") {
     return false;
   }
 
-  const hasOwnConstructor = hasOwn.call(target, 'constructor');
+  const hasOwnConstructor = hasOwn.call(target, "constructor");
   const hasIsPrototypeOf =
     target.constructor &&
     target.constructor.prototype &&
-    hasOwn.call(target.constructor.prototype, 'isPrototypeOf');
+    hasOwn.call(target.constructor.prototype, "isPrototypeOf");
   // Not own constructor property must be Object
   if (target.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
     return false;
@@ -73,5 +74,5 @@ export function isPlainObject(target: any) {
     /**/
   }
 
-  return typeof key === 'undefined' || hasOwn.call(target, key);
+  return typeof key === "undefined" || hasOwn.call(target, key);
 }

@@ -1,7 +1,7 @@
-import { AppInfo, IConfig } from '@electron-boot/framework';
-import { UpdaterConfig } from './types';
+import type { AppInfo, IConfig } from "@electron-boot/framework";
+import type { UpdaterConfig } from "./types";
 
-export const pouchdbConfig = (appInfo: AppInfo): IConfig => {
+export const updaterConfig = (_appInfo: AppInfo): IConfig => {
   return {
     updater: {} as UpdaterConfig,
   };

@@ -1,10 +1,10 @@
 export function getModuleRequirePathList(moduleName: string): string[] {
-  const moduleNameList = [moduleName, moduleName.replace(/\//g, '_')];
+  const moduleNameList = [moduleName, moduleName.replace(/\//g, "_")];
   let moduleNameMap: {
     [key: string]: any;
   } = {};
   const modulePathList: string[] = [];
-  Object.keys(require.cache || {}).forEach(moduleName => {
+  Object.keys(require.cache || {}).forEach((moduleName) => {
     let moduleIndex = -1;
     for (const moduleName of moduleNameList) {
       const index = moduleName.indexOf(moduleName);
