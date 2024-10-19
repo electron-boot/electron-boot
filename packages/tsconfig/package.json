@@ -1,0 +1,23 @@
+{
+  "name": "@electron-boot/tsconfig",
+  "version": "2.0.9",
+  "description": "",
+  "main": "tsconfig.json",
+  "keywords": [
+    "electron",
+    "tsconfig"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "tsconfig.json",
+    "tsconfig.node.json",
+    "tsconfig.web.json"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@types/node": "catalog:ts"
+  }
+}

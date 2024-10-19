@@ -7,14 +7,7 @@ import pluginN from "eslint-plugin-n";
 
 export default [
   {
-    ignores: [
-      "packages/create-vite/template-*",
-      "**/dist/**",
-      "**/fixtures/**",
-      "**/temp/**",
-      "**/.vitepress/cache/**",
-      "**/*.snap",
-    ],
+    ignores: ["**/dist/**", "**/fixtures/**"],
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,

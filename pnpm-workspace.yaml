@@ -1,6 +1,11 @@
 packages:
   - 'packages/*'
+  - "packages/template/template-vue-ts"
 catalogs:
   electron30:
     electron: ^33.0.0
     electron-builder: ^25.1.8
+  ts:
+    typescript: ^5.0.2
+    ts-node: ^10.9.2
+    "@types/node": ^22.7.7
