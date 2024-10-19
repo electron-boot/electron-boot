@@ -1,6 +1,6 @@
-import { EventEmitter } from "events";
-import type { BrowserWindow } from "electron";
-import type { ILogger } from "@electron-boot/logger";
+import { EventEmitter } from 'events';
+import type { BrowserWindow } from 'electron';
+import type { ILogger } from '@electron-boot/logger';
 
 /**
  * AbstractWindow 是一个抽象类，继承自 EventEmitter，用于表示应用程序中的窗口对象。
@@ -16,24 +16,20 @@ import type { ILogger } from "@electron-boot/logger";
  *   - close(): 关闭当前窗口。
  */
 export abstract class AbstractWindow extends EventEmitter {
-  protected abstract logger: ILogger;
-  protected abstract _id: number;
-  protected abstract _win: BrowserWindow;
+  protected logger: ILogger | null = null;
+  protected _id: number | null = null;
+  protected _win: BrowserWindow | null = null;
 
   send(channel: string, ...args: any[]): void {
     if (this._win) {
       if (this._win.isDestroyed() || this._win.webContents.isDestroyed()) {
-        this.logger.warn(
-          `Sending IPC message to channel '${channel}' for window that is destroyed`,
-        );
+        this.logger?.warn(`Sending IPC message to channel '${channel}' for window that is destroyed`);
         return;
       }
       try {
         this._win.webContents.send(channel, ...args);
       } catch (error) {
-        this.logger.warn(
-          `Error sending IPC message to channel '${channel}' of window ${this._id}: ${error}`,
-        );
+        this.logger?.warn(`Error sending IPC message to channel '${channel}' of window ${this._id}: ${error}`);
       }
     }
   }
