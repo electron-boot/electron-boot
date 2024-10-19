@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/updater",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "description": "application updater for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -16,6 +16,7 @@
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
     "lint": "eslint --cache --ext .ts -c eslint.config.mjs src/**",
     "format": "prettier --write --cache --parser typescript \"src/**/*.ts\"",

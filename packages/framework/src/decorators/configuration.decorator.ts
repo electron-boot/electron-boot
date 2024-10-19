@@ -1,6 +1,7 @@
-import { IFileDetector, ScopeEnum } from "../interface";
-import { CONFIGURATION_KEY, saveClassMetadata } from "./decorator.manager";
-import { Scope } from "./definitions.decorator";
+import type { IFileDetector } from '../interface';
+import { ScopeEnum } from '../interface';
+import { CONFIGURATION_KEY, saveClassMetadata } from './decorator.manager';
+import { Scope } from './definitions.decorator';
 
 export interface IComponentInfo {
   component: any;
@@ -16,9 +17,7 @@ export interface ResolveFilter {
 export interface InjectionConfigurationOptions {
   imports?: Array<string | IComponentInfo | { Configuration: any }>;
   importObjects?: Record<string, unknown>;
-  importConfigs?:
-    | Array<{ [environmentName: string]: Record<string, any> }>
-    | Record<string, any>;
+  importConfigs?: Array<{ [environmentName: string]: Record<string, any> }> | Record<string, any>;
   importConfigFilter?: (config: Record<string, any>) => Record<string, any>;
   namespace?: string;
   detector?: IFileDetector | false;
@@ -26,9 +25,7 @@ export interface InjectionConfigurationOptions {
   conflictCheck?: boolean;
 }
 
-export function Configuration(
-  options: InjectionConfigurationOptions = {},
-): ClassDecorator {
+export function Configuration(options: InjectionConfigurationOptions = {}): ClassDecorator {
   return (target: any) => {
     saveClassMetadata(CONFIGURATION_KEY, options, target);
     Scope(ScopeEnum.Singleton)(target);

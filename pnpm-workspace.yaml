@@ -1,6 +1,5 @@
 packages:
   - 'packages/*'
-  - "packages/template/template-vue-ts"
 catalogs:
   electron30:
     electron: ^33.0.0
