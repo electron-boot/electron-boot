@@ -1,21 +1,10 @@
 {
-  "arrowParens": "always",
-  "bracketSameLine": false,
   "bracketSpacing": true,
-  "semi": true,
   "singleQuote": true,
-  "jsxSingleQuote": false,
-  "quoteProps": "as-needed",
-  "trailingComma": "all",
-  "htmlWhitespaceSensitivity": "css",
-  "vueIndentScriptAndStyle": false,
-  "proseWrap": "preserve",
-  "insertPragma": false,
-  "requirePragma": false,
-  "tabWidth": 2,
-  "useTabs": false,
-  "embeddedLanguageFormatting": "auto",
+  "trailingComma": "none",
+  "arrowParens": "avoid",
   "printWidth": 120,
+  "semi": false,
   "overrides": [
     {
       "files": ["*.json5"],
@@ -32,3 +21,4 @@
     }
   ]
 }
+
