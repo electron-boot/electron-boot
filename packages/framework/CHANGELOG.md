@@ -1,5 +1,11 @@
 # @electron-boot/framework
 
+## 2.1.5
+
+### Patch Changes
+
+- fix:修复requestContext注入对象时，获取不到数据
+
 ## 2.1.4
 
 ### Patch Changes

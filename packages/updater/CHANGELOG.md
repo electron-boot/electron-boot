@@ -1,5 +1,12 @@
 # @electron-boot/updater
 
+## 2.1.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @electron-boot/framework@2.1.5
+
 ## 2.1.3
 
 ### Patch Changes
