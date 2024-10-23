@@ -1,5 +1,11 @@
 # @electron-boot/electron-boot
 
+## 2.1.6
+
+### Patch Changes
+
+- 修复bug
+
 ## 2.1.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @electron-boot/pouchdb
 
+## 2.1.6
+
+### Patch Changes
+
+- 修复bug
+- Updated dependencies
+  - @electron-boot/framework@2.1.7
+
 ## 2.1.5
 
 ### Patch Changes

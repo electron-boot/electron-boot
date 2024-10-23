@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/logger",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "fast development framework for electron",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -37,11 +37,6 @@
   },
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
-  "peerDependencies": {
-    "tslib": "catalog:ts",
-    "typescript": "catalog:ts",
-    "electron": "catalog:electron30"
-  },
   "dependencies": {
     "logform": "^2.6.1",
     "radash": "^12.1.0",

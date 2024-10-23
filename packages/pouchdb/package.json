@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "pouchdb for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -38,10 +38,6 @@
   },
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
-  "peerDependencies": {
-    "@electron-boot/framework": "workspace:*",
-    "pouchdb": "^9.0.0"
-  },
   "dependencies": {
     "@electron-boot/framework": "workspace:*",
     "pouchdb": "^9.0.0"

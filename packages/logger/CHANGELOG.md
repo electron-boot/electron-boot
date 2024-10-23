@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 2.1.4
+
+### Patch Changes
+
+- 修复bug
+
 ## 2.1.3
 
 ### Patch Changes

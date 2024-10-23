@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/preload",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "fast development framework for electron",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -40,12 +40,8 @@
   },
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
-  "peerDependencies": {
-    "electron": ">=25.8.0",
-    "tslib": ">=2.6.2",
+  "devDependencies": {
+    "electron": "catalog:electron30",
     "typescript": "catalog:ts"
-  },
-  "dependencies": {
-    "electron": "catalog:electron30"
   }
 }

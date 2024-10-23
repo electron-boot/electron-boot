@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/framework",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "fast development framework for electron",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -39,12 +39,6 @@
   },
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
-  "peerDependencies": {
-    "electron": ">=25.8.0",
-    "tslib": ">=2.6.2",
-    "typescript": ">=5.2.2",
-    "@electron-boot/logger": "workspace:*"
-  },
   "dependencies": {
     "@electron-boot/logger": "workspace:*",
     "picomatch": "^4.0.2",

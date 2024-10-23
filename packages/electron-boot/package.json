@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/electron-boot",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "fast development framework for electron",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -51,13 +51,16 @@
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
   "dependencies": {
-    "@rollup/plugin-json": "^6.1.0",
-    "cac": "^6.7.14",
-    "vite": "^5.4.9",
-    "picocolors": "^1.0.1",
-    "@swc/core": "^1.7.36",
-    "esbuild": "^0.24.0",
     "@babel/core": "^7.25.8",
-    "magic-string": "^0.30.12"
+    "@babel/plugin-transform-arrow-functions": "^7.25.9",
+    "cac": "^6.7.14",
+    "esbuild": "^0.24.0",
+    "magic-string": "^0.30.12",
+    "picocolors": "^1.0.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.9",
+    "@swc/core": "^1.7.36",
+    "electron": "catalog:electron30"
   }
 }

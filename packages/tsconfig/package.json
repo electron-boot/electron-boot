@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/tsconfig",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "",
   "main": "tsconfig.json",
   "keywords": [
@@ -17,7 +17,7 @@
   ],
   "author": "",
   "license": "MIT",
-  "peerDependencies": {
+  "devDependencies": {
     "@types/node": "catalog:ts"
   }
 }

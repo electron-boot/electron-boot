@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/updater",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "application updater for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -38,23 +38,17 @@
   },
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
   "license": "MIT",
-  "peerDependencies": {
-    "@electron-boot/framework": "workspace:*"
-  },
   "dependencies": {
     "@electron-boot/framework": "workspace:*",
     "axios": "^1.7.7",
-    "electron-updater": "^6.3.9",
     "typed-emitter": "^2.1.0",
     "js-yaml": "^4.1.0",
-    "radash": "^12.1.0",
-    "electron": "catalog:electron30"
+    "radash": "^12.1.0"
   },
   "devDependencies": {
     "@types/pouchdb": "^6.4.2",
-    "@electron-boot/framework": "workspace:*",
-    "@types/electron": "^1.6.10",
     "@types/js-yaml": "^4.0.9",
-    "@types/axios": "^0.14.0"
+    "electron": "catalog:electron30",
+    "electron-updater": "^6.3.9"
   }
 }
