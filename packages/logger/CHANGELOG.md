@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 2.1.3
+
+### Patch Changes
+
+- 修复electron包为开发依赖
+
 ## 2.1.2
 
 ### Patch Changes

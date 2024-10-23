@@ -7,4 +7,5 @@ catalogs:
   ts:
     typescript: ^5.0.2
     ts-node: ^10.9.2
+    tslib: ^2.8.0
     "@types/node": ^22.7.7

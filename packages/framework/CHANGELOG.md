@@ -1,5 +1,12 @@
 # @electron-boot/framework
 
+## 2.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @electron-boot/logger@2.1.3
+
 ## 2.1.5
 
 ### Patch Changes
