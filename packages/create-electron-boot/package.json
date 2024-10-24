@@ -1,21 +1,15 @@
 {
-  "name": "@electron-boot/create-electron-app",
+  "name": "create-electron-boot",
   "version": "1.0.0",
   "description": "fast development framework for electron",
-  "main": "dist/cjs/index.cjs",
-  "module": "dist/esm/index.mjs",
-  "types": "dist/types/index.d.ts",
-  "type": "module",
-  "exports": {
-    "types": "./dist/types/index.d.ts",
-    "import": "./dist/esm/index.mjs",
-    "require": "./dist/cjs/index.cjs"
+  "bin": {
+    "create-electron-app": "bin/index.js",
+    "cea": "bin/index.js"
   },
-  "publishConfig": {
-    "access": "public"
-  },
+  "private": true,
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "sideEffects": false,
   "scripts": {
@@ -30,12 +24,21 @@
   },
   "keywords": [
     "electron",
-    "bootstrap"
+    "bootstrap",
+    "create electron"
   ],
   "author": "electron-boot",
   "bugs": {
     "url": "https://github.com/electron-boot/electron-boot/issues"
   },
   "homepage": "https://github.com/electron-boot/electron-boot#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/minimist": "^1.2.5",
+    "@types/prompts": "^2.4.9",
+    "cross-spawn": "^7.0.3",
+    "minimist": "^1.2.8",
+    "picocolors": "^1.1.1",
+    "prompts": "^2.4.2"
+  }
 }
