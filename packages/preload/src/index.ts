@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer, webFrame } from 'electron'
-import type { ElectronApi } from './types'
+import type { IElectronApi, IpcRenderer, NodeProcess, WebFrame } from './types'
 
-export const electronApi: ElectronApi = {
-  ipcRenderer: {
+export class ElectronApi implements IElectronApi {
+  ipcRenderer: IpcRenderer = {
     send(channel, ...args) {
       ipcRenderer.send(channel, ...args)
     },
@@ -38,8 +38,19 @@ export const electronApi: ElectronApi = {
     removeAllListeners(channel) {
       ipcRenderer.removeAllListeners(channel)
     }
-  },
-  webFrame: {
+  }
+  process: NodeProcess = {
+    get platform() {
+      return process.platform
+    },
+    get versions() {
+      return process.versions
+    },
+    get env() {
+      return { ...process.env }
+    }
+  }
+  webFrame: WebFrame = {
     insertCSS(css) {
       return webFrame.insertCSS(css)
     },
@@ -53,27 +64,25 @@ export const electronApi: ElectronApi = {
         webFrame.setZoomLevel(level)
       }
     }
-  },
-  process: {
-    get platform() {
-      return process.platform
-    },
-    get versions() {
-      return process.versions
-    },
-    get env() {
-      return { ...process.env }
-    }
   }
 }
-export function exposeElectronAPI(): void {
+
+export function exposeElectronAPI<T extends IElectronApi>(electron: T): void {
   if (process.contextIsolated) {
     try {
-      contextBridge.exposeInMainWorld('electron', electronApi)
+      contextBridge.exposeInMainWorld('electron', electron)
     } catch (e) {
       console.error(e)
     }
   } else {
-    window.electron = electronApi
+    window.electron = electron
   }
+}
+
+declare global {
+  interface Window {
+    electron: IElectronApi
+  }
+  // eslint-disable-next-line no-var
+  var electron: IElectronApi
 }

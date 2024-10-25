@@ -178,16 +178,10 @@ export interface NodeProcess {
   readonly env: { [key: string]: string | undefined }
 }
 
-export interface ElectronApi {
+export interface IElectronApi {
   ipcRenderer: IpcRenderer
   webFrame: WebFrame
   process: NodeProcess
 }
 
-declare global {
-  interface Window {
-    electron: ElectronApi
-  }
-  // eslint-disable-next-line no-var
-  var electron: ElectronApi
-}
+export {}
