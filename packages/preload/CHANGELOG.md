@@ -1,5 +1,17 @@
 # @electron-boot/preload
 
+## 1.0.7
+
+### Patch Changes
+
+- 导出类改为导出变量
+
+## 1.0.6
+
+### Patch Changes
+
+- 修复导出
+
 ## 1.0.5
 
 ### Patch Changes

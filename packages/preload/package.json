@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/preload",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "fast development framework for electron",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -15,8 +15,7 @@
     "access": "public"
   },
   "files": [
-    "dist",
-    "global.d.ts"
+    "dist"
   ],
   "sideEffects": false,
   "scripts": {
