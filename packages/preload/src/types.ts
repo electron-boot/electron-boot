@@ -78,7 +78,7 @@ export interface IpcRenderer {
    *
    * If you do not need a response to the message, consider using `ipcRenderer.send`.
    */
-  invoke(channel: string, ...args: any[]): Promise<any>
+  invoke<Model>(channel: string, ...args: any[]): Promise<Model>
   /**
    * Send a message to the main process, optionally transferring ownership of zero or
    * more `MessagePort` objects.
@@ -119,7 +119,7 @@ export interface IpcRenderer {
    * renderer process until the reply is received, so use this method only as a last
    * resort. It's much better to use the asynchronous version, `invoke()`.
    */
-  sendSync(channel: string, ...args: any[]): any
+  sendSync<Model>(channel: string, ...args: any[]): Model
   /**
    * Like `ipcRenderer.send` but the event will be sent to the `<webview>` element in
    * the host page instead of the main process.

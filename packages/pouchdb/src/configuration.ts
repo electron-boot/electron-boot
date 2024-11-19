@@ -1,27 +1,24 @@
-import {
-  ConfigService,
-  Configuration,
-  GenericApplicationContext,
-} from '@electron-boot/framework';
-import { pouchdbConfig } from './config.default';
-import { PouchDBServices } from './pouchdb.service';
+import type { GenericApplicationContext } from '@electron-boot/framework'
+import { ConfigService, Configuration } from '@electron-boot/framework'
+import { pouchdbConfig } from './config.default'
+import { PouchDBServices } from './pouchdb.service'
 
 @Configuration({
   namespace: 'pouchdb',
   imports: [
     {
-      component: PouchDBServices,
-    },
+      component: PouchDBServices
+    }
   ],
   importConfigs: [
     {
-      default: pouchdbConfig,
-    },
-  ],
+      default: pouchdbConfig
+    }
+  ]
 })
 export class PouchdbConfiguration {
   constructor(ctx: GenericApplicationContext) {
-    let configuration = ctx.get(ConfigService).getConfiguration('pouchdb');
-    ctx.get<PouchDBServices>(PouchDBServices, [ctx, configuration]);
+    const configuration = ctx.get(ConfigService).getConfiguration('pouchdb')
+    ctx.get<PouchDBServices>(PouchDBServices, [ctx, configuration])
   }
 }

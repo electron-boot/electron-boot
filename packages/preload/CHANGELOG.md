@@ -1,5 +1,11 @@
 # @electron-boot/preload
 
+## 1.0.8
+
+### Patch Changes
+
+- 增加ipc的可调用性
+
 ## 1.0.7
 
 ### Patch Changes

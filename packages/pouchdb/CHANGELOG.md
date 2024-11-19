@@ -1,5 +1,11 @@
 # @electron-boot/pouchdb
 
+## 2.1.7
+
+### Patch Changes
+
+- 增加ipc的可调用性
+
 ## 2.1.6
 
 ### Patch Changes
