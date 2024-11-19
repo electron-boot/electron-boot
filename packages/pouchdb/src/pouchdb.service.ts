@@ -6,7 +6,7 @@ import * as path from 'node:path'
 
 @Provide()
 @Scope(ScopeEnum.Singleton)
-export class PouchDBServices extends PouchDB {
+export class PouchdbService extends PouchDB {
   constructor(_ctx: GenericApplicationContext, config: PouchdbConfig) {
     const dbname = path.join(config.path, config.name)
     super(dbname, config)

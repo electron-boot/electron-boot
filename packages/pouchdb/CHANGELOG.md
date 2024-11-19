@@ -1,5 +1,17 @@
 # @electron-boot/pouchdb
 
+## 2.1.9
+
+### Patch Changes
+
+- 修复发布失败
+
+## 2.1.8
+
+### Patch Changes
+
+- 调整pouchdbService名称
+
 ## 2.1.7
 
 ### Patch Changes

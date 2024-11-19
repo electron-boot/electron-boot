@@ -1,13 +1,13 @@
 import type { GenericApplicationContext } from '@electron-boot/framework'
 import { ConfigService, Configuration } from '@electron-boot/framework'
 import { pouchdbConfig } from './config.default'
-import { PouchDBServices } from './pouchdb.service'
+import { PouchdbService } from './pouchdb.service'
 
 @Configuration({
   namespace: 'pouchdb',
   imports: [
     {
-      component: PouchDBServices
+      component: PouchdbService
     }
   ],
   importConfigs: [
@@ -19,6 +19,6 @@ import { PouchDBServices } from './pouchdb.service'
 export class PouchdbConfiguration {
   constructor(ctx: GenericApplicationContext) {
     const configuration = ctx.get(ConfigService).getConfiguration('pouchdb')
-    ctx.get<PouchDBServices>(PouchDBServices, [ctx, configuration])
+    ctx.get<PouchdbService>(PouchdbService, [ctx, configuration])
   }
 }
