@@ -1,5 +1,11 @@
 # @electron-boot/pouchdb
 
+## 2.1.13
+
+### Patch Changes
+
+- 修复导入bug
+
 ## 2.1.12
 
 ### Patch Changes

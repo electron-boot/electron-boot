@@ -38,7 +38,10 @@ export class PouchdbService {
    * @param _ctx 上下文
    * @param config 配置
    */
-  constructor(_ctx: GenericApplicationContext, config: PouchdbConfig) {
+  constructor(
+    private ctx: GenericApplicationContext,
+    config: PouchdbConfig
+  ) {
     fs.existsSync(config.path) || fs.mkdirSync(config.path)
     const dbname = path.join(config.path, config.name)
     if (config.docMaxByteLength) this.docMaxByteLength = config.docMaxByteLength
@@ -249,7 +252,10 @@ export class PouchdbService {
    */
   async importDB(config: dumpOptions): Promise<void> {
     const webdavClient = new WebDav(config)
-    webdavClient.import(this.pouchDB)
+    await this.pouchDB.destroy()
+    const syncDb = new PouchdbService(this.ctx, this.config)
+    this.pouchDB = syncDb.pouchDB
+    await webdavClient.import(this.pouchDB)
   }
 
   /**
