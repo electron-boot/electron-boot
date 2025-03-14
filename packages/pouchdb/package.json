@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "description": "pouchdb for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -32,6 +32,9 @@
     "bootstrap",
     "pouchdb"
   ],
+  "engines": {
+    "node": "^18.0.0 || >=20.0.0"
+  },
   "author": "electron-boot",
   "bugs": {
     "url": "https://github.com/electron-boot/electron-boot/issues"
@@ -40,7 +43,12 @@
   "license": "MIT",
   "dependencies": {
     "@electron-boot/framework": "workspace:*",
-    "pouchdb": "^9.0.0"
+    "@types/memorystream": "^0.3.4",
+    "memorystream": "^0.3.1",
+    "pouchdb": "^9.0.0",
+    "pouchdb-load": "^1.4.6",
+    "pouchdb-replication-stream": "^1.2.9",
+    "webdav": "^5.8.0"
   },
   "devDependencies": {
     "@types/pouchdb": "^6.4.2"

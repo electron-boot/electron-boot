@@ -1,5 +1,11 @@
 # @electron-boot/pouchdb
 
+## 2.1.12
+
+### Patch Changes
+
+- 增加数据库导出
+
 ## 2.1.11
 
 ### Patch Changes
