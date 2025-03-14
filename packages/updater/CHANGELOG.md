@@ -1,5 +1,20 @@
 # @electron-boot/updater
 
+## 2.1.8
+
+### Patch Changes
+
+- 优化对象查找
+- Updated dependencies
+  - @electron-boot/framework@2.1.9
+
+## 2.1.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @electron-boot/framework@2.1.8
+
 ## 2.1.6
 
 ### Patch Changes

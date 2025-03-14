@@ -1,5 +1,17 @@
 # @electron-boot/framework
 
+## 2.1.9
+
+### Patch Changes
+
+- 优化对象查找
+
+## 2.1.8
+
+### Patch Changes
+
+- 更新启动时机
+
 ## 2.1.7
 
 ### Patch Changes
