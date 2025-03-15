@@ -1,7 +1,7 @@
 import type { GenericApplicationContext } from '@electron-boot/framework'
 import { Singleton } from '@electron-boot/framework'
 import PouchDB from 'pouchdb'
-import type { CheckDoc, dumpOptions, PouchdbConfig, PutResponse } from './types'
+import type { CheckDoc, MigrateOptions, PouchdbConfig, PutResponse } from './types'
 import * as path from 'node:path'
 import replicationStream from 'pouchdb-replication-stream'
 import load from 'pouchdb-load'
@@ -42,6 +42,9 @@ export class PouchdbService {
     private ctx: GenericApplicationContext,
     config: PouchdbConfig
   ) {
+    if (!config.path || !config.name) {
+      throw new Error('pouchdb config error')
+    }
     fs.existsSync(config.path) || fs.mkdirSync(config.path)
     const dbname = path.join(config.path, config.name)
     if (config.docMaxByteLength) this.docMaxByteLength = config.docMaxByteLength
@@ -242,7 +245,7 @@ export class PouchdbService {
    * 导出数据库
    * @param config 导出数据库配置
    */
-  async dumpDB(config: dumpOptions): Promise<void> {
+  async exportDB(config: MigrateOptions): Promise<void> {
     const webdavClient = new WebDav(config)
     webdavClient.export(this.pouchDB)
   }
@@ -250,7 +253,7 @@ export class PouchdbService {
    * 导入数据库
    * @param config 导入数据库配置
    */
-  async importDB(config: dumpOptions): Promise<void> {
+  async importDB(config: MigrateOptions): Promise<void> {
     const webdavClient = new WebDav(config)
     await this.pouchDB.destroy()
     const syncDb = new PouchdbService(this.ctx, this.config)

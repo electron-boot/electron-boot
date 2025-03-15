@@ -1,5 +1,5 @@
 import { createClient, type WebDAVClient } from 'webdav'
-import type { dumpOptions } from './types'
+import type { MigrateOptions } from './types'
 import MemoryStream from 'memorystream'
 
 /**
@@ -7,7 +7,7 @@ import MemoryStream from 'memorystream'
  */
 export class WebDav {
   private client: WebDAVClient
-  constructor(private options: dumpOptions) {
+  constructor(private options: MigrateOptions) {
     this.client = createClient(options.url, {
       username: options.username,
       password: options.password

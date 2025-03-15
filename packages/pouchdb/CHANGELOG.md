@@ -1,5 +1,11 @@
 # @electron-boot/pouchdb
 
+## 2.1.14
+
+### Patch Changes
+
+- refactor(pouchdb): 重构数据库迁移相关代码
+
 ## 2.1.13
 
 ### Patch Changes
