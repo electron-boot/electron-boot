@@ -4,14 +4,14 @@ import PouchDB from 'pouchdb'
 import type { CheckDoc, MigrateOptions, PouchdbConfig, PutResponse } from './types'
 import * as path from 'node:path'
 import replicationStream from 'pouchdb-replication-stream'
-import load from 'pouchdb-load'
 import fs from 'node:fs'
 import { WebDav } from './webdav'
+import { loadString } from './load'
 
 // 注册插件
 PouchDB.plugin(replicationStream.plugin)
 PouchDB.plugin({
-  loadit: load.load
+  loadIt: loadString
 })
 PouchDB.adapter('writableStream', replicationStream.adapters.writableStream)
 

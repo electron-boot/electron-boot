@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "2.1.14",
+  "version": "3.0.0",
   "description": "pouchdb for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -46,8 +46,9 @@
     "@types/memorystream": "^0.3.4",
     "memorystream": "^0.3.1",
     "pouchdb": "^9.0.0",
-    "pouchdb-load": "^1.4.6",
     "pouchdb-replication-stream": "^1.2.9",
+    "pouchdb-checkpointer": "^9.0.0",
+    "pouchdb-generate-replication-id": "^9.0.0",
     "webdav": "^5.8.0"
   },
   "devDependencies": {
