@@ -1,5 +1,17 @@
 # @electron-boot/pouchdb
 
+## 3.0.3
+
+### Patch Changes
+
+- 修复错误
+
+## 3.0.2
+
+### Patch Changes
+
+- 修复错误
+
 ## 3.0.1
 
 ### Patch Changes
