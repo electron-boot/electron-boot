@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "pouchdb for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -50,7 +50,6 @@
     "pouchdb-checkpointer": "^9.0.0",
     "pouchdb-generate-replication-id": "^9.0.0",
     "pouchdb-promise": "^6.4.3",
-    "pouchdb-utils": "^9.0.0",
     "argsarray": "^0.0.1",
     "webdav": "^5.8.0"
   },

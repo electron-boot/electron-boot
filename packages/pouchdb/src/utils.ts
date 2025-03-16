@@ -1,8 +1,5 @@
 import Promise from 'pouchdb-promise'
-import pouchUtils from 'pouchdb-utils'
 import argsarray from 'argsarray'
-
-export const uuid = pouchUtils.uuid
 
 /* istanbul ignore next */
 export function once(fun: Function): Function {

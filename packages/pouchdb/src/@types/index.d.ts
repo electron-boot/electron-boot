@@ -111,11 +111,6 @@ declare module 'pouchdb-checkpointer' {
   export = Checkpointer;
 }
 
-
-declare module 'pouchdb-utils' {
-  export function uuid(): string;
-  // Add other exports as needed
-}
 declare module 'pouchdb-promise' {
   import { Promise } from 'es6-promise';
   export = Promise;
