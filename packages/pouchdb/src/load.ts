@@ -1,5 +1,6 @@
 import Checkpointer from 'pouchdb-checkpointer';
 import genReplicationId from 'pouchdb-generate-replication-id';
+import { toPromise } from './utils'
 
 export interface ParsedDumpResult {
   err?: Error;
@@ -36,10 +37,12 @@ export interface LoadStringOptions {
   view?: string;
 }
 
-export function loadString(db: any, data: string, opts: LoadStringOptions, callback: (err?: Error) => void): void {
+type Callback = (err?: Error) => void;
+
+export function loadString(db: any, data: string, opts: LoadStringOptions, callback?: Callback): void {
   const parsedDump = parseDump(data);
   if (parsedDump.err) {
-    return callback(parsedDump.err);
+    return callback?.(parsedDump.err);
   }
   const docs = parsedDump.docs!;
   const lastSeq = parsedDump.lastSeq!;
@@ -79,6 +82,21 @@ export function loadString(db: any, data: string, opts: LoadStringOptions, callb
     }
     return writeProxyCheckpoint();
   }).then(() => {
-    callback();
+    callback?.();
   }, callback);
 }
+
+
+
+export const load = toPromise(function (url: string, opts: any | Callback, callback?: Callback) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const db = this;
+
+  if (typeof opts === 'function') {
+    callback = opts as Callback;
+    opts = {};
+  }
+  return loadString(db, url, opts as LoadStringOptions, callback)
+});

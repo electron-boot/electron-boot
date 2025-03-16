@@ -6,12 +6,12 @@ import * as path from 'node:path'
 import replicationStream from 'pouchdb-replication-stream'
 import fs from 'node:fs'
 import { WebDav } from './webdav'
-import { loadString } from './load'
+import { load } from './load'
 
 // 注册插件
 PouchDB.plugin(replicationStream.plugin)
 PouchDB.plugin({
-  loadIt: loadString
+  loadIt: load
 })
 PouchDB.adapter('writableStream', replicationStream.adapters.writableStream)
 

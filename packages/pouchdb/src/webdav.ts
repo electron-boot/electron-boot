@@ -1,6 +1,7 @@
 import { createClient, type WebDAVClient } from 'webdav'
 import type { MigrateOptions } from './types'
 import MemoryStream from 'memorystream'
+import path from 'node:path'
 
 /**
  * WebDav 数据库迁移
@@ -31,9 +32,9 @@ export class WebDav {
    */
   async export(dbInstance: PouchDB.Database): Promise<void> {
     try {
-      const result = await this.client.exists(this.options.cloudPath)
+      const result = await this.client.exists(path.dirname(this.options.cloudPath))
       if (!result) {
-        await this.client.createDirectory(this.options.cloudPath)
+        await this.client.createDirectory(path.dirname(this.options.cloudPath))
       }
     } catch (e) {
       throw new Error('WebDav目录创建出错:' + e)
@@ -65,7 +66,7 @@ export class WebDav {
    */
   async import(dbInstance: PouchDB.Database): Promise<void> {
     try {
-      const result = await this.client.exists(this.options.cloudPath)
+      const result = await this.client.exists(path.dirname(this.options.cloudPath))
       if (!result) {
         throw new Error('WebDav目录不存在')
       }
