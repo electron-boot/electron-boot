@@ -247,7 +247,7 @@ export class PouchdbService {
    */
   async exportDB(config: MigrateOptions): Promise<void> {
     const webdavClient = new WebDav(config)
-    webdavClient.export(this.pouchDB)
+    await webdavClient.export(this.pouchDB)
   }
   /**
    * 导入数据库
