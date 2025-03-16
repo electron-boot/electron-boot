@@ -1,5 +1,17 @@
 # @electron-boot/pouchdb
 
+## 3.0.1
+
+### Patch Changes
+
+- 修复webdav导出
+
+## 3.0.0
+
+### Major Changes
+
+- 替换过时的包
+
 ## 2.1.14
 
 ### Patch Changes
