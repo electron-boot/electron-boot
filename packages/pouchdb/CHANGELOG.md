@@ -1,5 +1,19 @@
 # @electron-boot/pouchdb
 
+## 3.0.7
+
+### Patch Changes
+
+- 更新使用同一版本
+- Updated dependencies
+  - @electron-boot/framework@3.0.7
+
+## 3.0.6
+
+### Patch Changes
+
+- 更新用法
+
 ## 3.0.5
 
 ### Patch Changes

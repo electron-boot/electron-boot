@@ -1,7 +1,7 @@
 import type { GenericApplicationContext } from '@electron-boot/framework'
 import { Singleton } from '@electron-boot/framework'
 import PouchDB from 'pouchdb'
-import type { CheckDoc, MigrateOptions, PouchdbConfig, PutResponse } from './types'
+import type { CheckDoc, DBError, GetResponse, MigrateOptions, PouchdbConfig } from './types'
 import * as path from 'node:path'
 import replicationStream from 'pouchdb-replication-stream'
 import fs from 'node:fs'
@@ -35,7 +35,7 @@ export class PouchdbService {
   private pouchDB: PouchDB.Database
   /**
    * 构造函数
-   * @param _ctx 上下文
+   * @param ctx
    * @param config 配置
    */
   constructor(
@@ -76,10 +76,11 @@ export class PouchdbService {
    * @param message 错误信息
    * @returns
    */
-  errorInfo(name: string, message: string): PouchDB.Core.Error {
+  errorInfo(name: string, message: string): DBError {
     return {
-      name,
-      message
+      _error:true,
+      _name: name,
+      _message: message
     }
   }
   /**
@@ -87,7 +88,7 @@ export class PouchdbService {
    * @param doc 文档内容
    * @returns 是否大于最大字节长度
    */
-  private checkDocSize<Model extends object = object>(doc: CheckDoc<Model>): PouchDB.Core.Error | false {
+  private checkDocSize<Model extends object = object>(doc: CheckDoc<Model>): DBError | false {
     if (Buffer.byteLength(JSON.stringify(doc)) > this.docMaxByteLength) {
       return this.errorInfo('exception', `doc max size ${this.docMaxByteLength / 1024 / 1024} M`)
     }
@@ -125,13 +126,13 @@ export class PouchdbService {
    * @param id 文档id
    * @returns 文档信息
    */
-  async get<Model extends object = object>(name: string, id: string): Promise<PutResponse<Model> | PouchDB.Core.Error> {
+  async get<Model extends object = object>(name: string, id: string): Promise<GetResponse<Model> | DBError> {
     try {
-      const result: PutResponse<Model> = await this.pouchDB.get(this.getDocID(name, id))
+      const result: GetResponse<Model> = await this.pouchDB.get(this.getDocID(name, id))
       result._id = this.replaceDocID(name, result._id)
       return result
     } catch (e: any) {
-      return { id, name: e.name, error: !0, message: e.message }
+      return { _id:id, _name: e.name, _error: true, _message: e.message }
     }
   }
   /**
@@ -143,7 +144,7 @@ export class PouchdbService {
   async remove<Model extends object = object>(
     name: string,
     doc: string | PouchDB.Core.Document<Model>
-  ): Promise<PouchDB.Core.Response | PouchDB.Core.Error> {
+  ): Promise<PouchDB.Core.Response | DBError> {
     try {
       let target
       if ('object' === typeof doc) {
@@ -177,7 +178,7 @@ export class PouchdbService {
   async bulkDocs<Model extends object = object>(
     name: string,
     docs: Array<PouchDB.Core.PutDocument<Model>>
-  ): Promise<Array<PouchDB.Core.Response | PouchDB.Core.Error> | PouchDB.Core.Error> {
+  ): Promise<Array<PouchDB.Core.Response | PouchDB.Core.Error> | DBError> {
     let result
     try {
       if (!Array.isArray(docs)) return this.errorInfo('exception', 'not array')
@@ -215,7 +216,7 @@ export class PouchdbService {
   async allDocs<Model extends object = object>(
     name: string,
     key: string | Array<string>
-  ): Promise<PouchDB.Core.AllDocsResponse<Model> | PouchDB.Core.AllDocsWithKeysResponse<Model> | PouchDB.Core.Error> {
+  ): Promise<PouchDB.Core.AllDocsResponse<Model> | PouchDB.Core.AllDocsWithKeysResponse<Model> | DBError> {
     const config: any = { include_docs: true }
     if (key) {
       if ('string' === typeof key) {
@@ -238,7 +239,9 @@ export class PouchdbService {
           res.doc._id = this.replaceDocID(name, res.doc._id)
         }
       })
-    } catch (_e) {}
+    } catch (e:any) {
+      return  this.errorInfo(e.name, e.message)
+    }
     return result
   }
   /**
@@ -274,7 +277,7 @@ export class PouchdbService {
     docId: string,
     attachment: Buffer | Uint8Array,
     type: string
-  ): Promise<PouchDB.Core.Response | PouchDB.Core.Error> {
+  ): Promise<PouchDB.Core.Response | DBError> {
     // 将输入数据转换为 Buffer 格式
     const buffer = Buffer.isBuffer(attachment) ? attachment : Buffer.from(attachment)
     // 检查附件大小是否超过限制
@@ -312,7 +315,7 @@ export class PouchdbService {
    * @param len 附件长度，默认为 '0'
    * @returns 成功返回 Blob、Buffer 或错误信息，失败返回错误信息
    */
-  async getAttachment(name: string, docId: string, len = '0'): Promise<Blob | Buffer | PouchDB.Core.Error> {
+  async getAttachment(name: string, docId: string, len = '0'): Promise<Blob | Buffer | DBError> {
     try {
       return await this.pouchDB.getAttachment(this.getDocID(name, docId), len)
     } catch (e: any) {

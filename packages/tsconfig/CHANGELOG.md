@@ -1,5 +1,11 @@
 # @electron-boot/tsconfig
 
+## 3.0.7
+
+### Patch Changes
+
+- 更新使用同一版本
+
 ## 2.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @electron-boot/preload
 
+## 3.0.7
+
+### Patch Changes
+
+- 更新使用同一版本
+
 ## 1.0.8
 
 ### Patch Changes

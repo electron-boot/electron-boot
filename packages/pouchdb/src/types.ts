@@ -24,7 +24,19 @@ export type CheckDoc<Model extends object = object> = PouchDB.Core.PostDocument<
 /**
  * 数据库响应
  */
-export type PutResponse<Model extends object = object> = Model & PouchDB.Core.IdMeta & PouchDB.Core.GetMeta
+export type GetResponse<Model extends object = object> = Model & PouchDB.Core.IdMeta & PouchDB.Core.GetMeta
+/**
+ * 错误信息
+ */
+export type DBError = {
+  _status?: number | undefined;
+  _name?: string | undefined;
+  _message?: string | undefined;
+  _reason?: string | undefined;
+  _error?: string | boolean | undefined;
+  _id?: string | undefined;
+  _rev?: string | undefined;
+}
 
 /**
  * 数据库迁移选项
