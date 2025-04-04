@@ -1,4 +1,4 @@
-import { saveObjectDefinition } from "./decorator.manager";
+import { saveObjectDefinition, savePreloadModule } from './decorator.manager'
 import type { ObjectIdentifier } from "../interface";
 import { ScopeEnum as ScopeEnum } from "../interface";
 import { Provide } from "./provide.decorator";
@@ -28,6 +28,19 @@ export function Scope(
 
 export function Singleton(identifier?: ObjectIdentifier): ClassDecorator {
   return function (target: any): void {
+    Scope(ScopeEnum.Singleton)(target);
+    Provide(identifier)(target);
+  };
+}
+
+/**
+ * 提前要加载的模块
+ * @param identifier
+ * @constructor
+ */
+export function Preload(identifier?: ObjectIdentifier): ClassDecorator {
+  return function (target: any): void {
+    savePreloadModule(target)
     Scope(ScopeEnum.Singleton)(target);
     Provide(identifier)(target);
   };

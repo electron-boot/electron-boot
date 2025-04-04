@@ -151,7 +151,7 @@ export class Application {
     const modules = listPreloadModule();
     for (const module of modules) {
       // preload init context
-      await applicationContext.getAsync(module);
+      await applicationContext.getAsync(module,[applicationContext]);
     }
 
     this.printStepDebugInfo("End of initialize and start");
