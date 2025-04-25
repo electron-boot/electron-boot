@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/pouchdb",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "description": "pouchdb for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",

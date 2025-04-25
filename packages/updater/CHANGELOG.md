@@ -1,5 +1,12 @@
 # @electron-boot/updater
 
+## 3.0.9
+
+### Patch Changes
+
+- Updated dependencies
+  - @electron-boot/framework@3.0.9
+
 ## 3.0.8
 
 ### Patch Changes

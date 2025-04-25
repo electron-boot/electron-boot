@@ -1,5 +1,11 @@
 # @electron-boot/framework
 
+## 3.0.9
+
+### Patch Changes
+
+- 更新abstract基础方法
+
 ## 3.0.8
 
 ### Patch Changes
