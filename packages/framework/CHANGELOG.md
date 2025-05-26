@@ -1,5 +1,11 @@
 # @electron-boot/framework
 
+## 3.0.10
+
+### Patch Changes
+
+- 替换BrowseWindow为BaseWindow
+
 ## 3.0.9
 
 ### Patch Changes

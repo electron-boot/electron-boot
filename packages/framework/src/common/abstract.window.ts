@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events'
-import type { BrowserWindow } from 'electron'
+import type { BaseWindow } from 'electron'
 import type { ILogger } from '@electron-boot/logger'
 
 /**
@@ -18,25 +18,12 @@ import type { ILogger } from '@electron-boot/logger'
 export abstract class AbstractWindow extends EventEmitter {
   protected logger: ILogger | null = null
   protected _id: number | null = null
-  protected _win: BrowserWindow | null = null
+  protected _win: BaseWindow | null = null
   protected ready: null | Promise<boolean> = null
   protected async createWindow(): Promise<void> {
     throw new Error('Method not implemented.')
   }
 
-  send(channel: string, ...args: any[]): void {
-    if (this._win) {
-      if (this._win.isDestroyed() || this._win.webContents.isDestroyed()) {
-        this.logger?.warn(`Sending IPC message to channel '${channel}' for window that is destroyed`)
-        return
-      }
-      try {
-        this._win.webContents.send(channel, ...args)
-      } catch (error) {
-        this.logger?.warn(`Error sending IPC message to channel '${channel}' of window ${this._id}: ${error}`)
-      }
-    }
-  }
   /**
    * 显示窗口
    */

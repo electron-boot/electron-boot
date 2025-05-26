@@ -1,5 +1,12 @@
 # @electron-boot/pouchdb
 
+## 3.0.10
+
+### Patch Changes
+
+- Updated dependencies
+  - @electron-boot/framework@3.0.10
+
 ## 3.0.9
 
 ### Patch Changes
