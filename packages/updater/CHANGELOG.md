@@ -1,5 +1,11 @@
 # @electron-boot/updater
 
+## 3.0.11
+
+### Patch Changes
+
+- @electron-boot/framework@3.0.11
+
 ## 3.0.10
 
 ### Patch Changes

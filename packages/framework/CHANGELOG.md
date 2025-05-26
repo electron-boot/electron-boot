@@ -1,5 +1,12 @@
 # @electron-boot/framework
 
+## 3.0.11
+
+### Patch Changes
+
+- Updated dependencies
+  - @electron-boot/logger@3.0.11
+
 ## 3.0.10
 
 ### Patch Changes

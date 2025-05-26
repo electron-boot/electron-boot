@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/tsconfig",
-  "version": "3.0.9",
+  "version": "3.0.11",
   "description": "",
   "main": "tsconfig.json",
   "keywords": [

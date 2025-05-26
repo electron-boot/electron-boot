@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 3.0.11
+
+### Patch Changes
+
+- 同步版本号
+
 ## 3.0.8
 
 ### Patch Changes
