@@ -1,5 +1,13 @@
 # @electron-boot/pouchdb
 
+## 3.0.12
+
+### Patch Changes
+
+- 小版本升级，移除不必要的东西
+- Updated dependencies
+  - @electron-boot/framework@3.0.12
+
 ## 3.0.11
 
 ### Patch Changes

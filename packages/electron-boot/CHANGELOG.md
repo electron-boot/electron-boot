@@ -1,5 +1,11 @@
 # @electron-boot/electron-boot
 
+## 3.0.12
+
+### Patch Changes
+
+- 小版本升级，移除不必要的东西
+
 ## 3.0.11
 
 ### Patch Changes
