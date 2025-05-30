@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 3.0.13
+
+### Patch Changes
+
+- 增加窗口状态管理包
+
 ## 3.0.12
 
 ### Patch Changes
