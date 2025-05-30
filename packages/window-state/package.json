@@ -1,7 +1,7 @@
 {
-  "name": "@electron-boot/window-stats",
-  "version": "3.0.13",
-  "description": "electron window stats for electron-boot",
+  "name": "@electron-boot/window-state",
+  "version": "3.0.14",
+  "description": "electron window state for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",

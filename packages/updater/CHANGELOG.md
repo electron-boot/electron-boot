@@ -1,5 +1,13 @@
 # @electron-boot/updater
 
+## 3.0.14
+
+### Patch Changes
+
+- 增加window-state包，用来管理窗口状态
+- Updated dependencies
+  - @electron-boot/framework@3.0.14
+
 ## 3.0.13
 
 ### Patch Changes
