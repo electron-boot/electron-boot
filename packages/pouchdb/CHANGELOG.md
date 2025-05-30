@@ -1,5 +1,13 @@
 # @electron-boot/pouchdb
 
+## 3.0.15
+
+### Patch Changes
+
+- 导出类型
+- Updated dependencies
+  - @electron-boot/framework@3.0.15
+
 ## 3.0.14
 
 ### Patch Changes

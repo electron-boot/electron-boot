@@ -1,5 +1,11 @@
 # @electron-boot/electron-boot
 
+## 3.0.15
+
+### Patch Changes
+
+- 导出类型
+
 ## 3.0.14
 
 ### Patch Changes

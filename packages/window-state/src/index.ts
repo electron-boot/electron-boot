@@ -3,7 +3,7 @@ import * as fs from 'node:fs'
 import { app, screen } from 'electron'
 import * as path from 'path'
 
-interface WindowState {
+export interface WindowState {
   x?: number
   y?: number
   width: number
@@ -13,7 +13,7 @@ interface WindowState {
   isFullScreen?: boolean
 }
 
-interface WindowStateConfig {
+export interface WindowStateConfig {
   file?: string
   path?: string
   maximize?: boolean
@@ -22,7 +22,7 @@ interface WindowStateConfig {
   defaultHeight?: number
 }
 
-interface BaseWindow {
+export interface BaseWindow {
   isMaximized(): boolean
   isMinimized(): boolean
   isFullScreen(): boolean
@@ -33,7 +33,7 @@ interface BaseWindow {
   on(event: 'resize' | 'move' | 'close' | 'closed', listener: (...args: any[]) => void): this
 }
 
-interface State {
+export interface State {
   displayBounds: Electron.Rectangle
   /** The saved height of loaded state. `defaultHeight` if the state has not been saved yet. */
   height: number
@@ -57,7 +57,7 @@ interface State {
   y: number
 }
 
-export default function (options: WindowStateConfig): State {
+export const windowStateKeeper = function (options: WindowStateConfig): State {
   const electronApp = app
   const electronScreen = screen
   let state: WindowState
