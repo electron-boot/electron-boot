@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/window-state",
-  "version": "3.0.15",
+  "version": "3.0.16",
   "description": "electron window state for electron-boot",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",

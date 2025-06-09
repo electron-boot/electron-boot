@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 3.0.16
+
+### Patch Changes
+
+- 窗口状态管理支持多个窗口
+
 ## 3.0.15
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @electron-boot/pouchdb
 
+## 3.0.16
+
+### Patch Changes
+
+- 窗口状态管理支持多个窗口
+- Updated dependencies
+  - @electron-boot/framework@3.0.16
+
 ## 3.0.15
 
 ### Patch Changes

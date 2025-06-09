@@ -14,6 +14,7 @@ export interface WindowState {
 }
 
 export interface WindowStateConfig {
+  name:string
   file?: string
   path?: string
   maximize?: boolean
@@ -64,10 +65,10 @@ export const windowStateKeeper = function (options: WindowStateConfig): State {
   let winRef: BaseWindow | null
   let stateChangeTimer: NodeJS.Timeout | undefined
   const eventHandlingDelay = 100
-
+  const name = options.name
   const config: Required<WindowStateConfig> = Object.assign(
     {
-      file: 'window-state.json',
+      file: `${name}-state.json`,
       path: electronApp.getPath('userData'),
       maximize: true,
       fullScreen: true,
