@@ -3,7 +3,7 @@ import { ipcMain } from 'electron'
 import type { Context, IApplicationContext, ISocket } from '../interface'
 import { Socket } from '../decorators/socket.decorator'
 import { Autowired } from '../decorators/autowired.decorator'
-import type { EventService } from './event.service'
+import type { ControllerService } from './controller.service'
 import { RequestApplicationContext } from '../context/request.application.context'
 import type { ILogger } from '@electron-boot/logger'
 import { LoggerFactory } from '@electron-boot/logger'
@@ -17,7 +17,7 @@ export class IpcService implements ISocket {
   constructor(readonly applicationContext: IApplicationContext) {}
 
   @Autowired()
-  protected eventService!: EventService
+  protected controllerService!: ControllerService
 
   getName(): string {
     return 'ipc'
@@ -50,7 +50,7 @@ export class IpcService implements ISocket {
   }
 
   async run(): Promise<void> {
-    const eventMap = await this.eventService.getEventList()
+    const eventMap = await this.controllerService.getIpcList()
     for (const eventInfo of Array.from(eventMap.values())) {
       const channel = eventInfo.eventName
 
@@ -67,7 +67,7 @@ export class IpcService implements ISocket {
         }
         return result
       }
-      this.logger.debug("register ipc channel: %s", channel)
+      this.logger.debug('register ipc channel: %s', channel)
       // ipc main on
       ipcMain.on(channel, async (event: IpcMainEvent, ...data: any[]) => {
         const result = await ipcResult(event, data)
