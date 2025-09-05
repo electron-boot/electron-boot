@@ -52,7 +52,7 @@ export class IpcService implements ISocket {
   async run(): Promise<void> {
     const eventMap = await this.controllerService.getIpcList()
     for (const eventInfo of Array.from(eventMap.values())) {
-      const channel = eventInfo.eventName
+      const channel = eventInfo.channel
 
       const ipcResult = async (event: any, data: any[]) => {
         const ctx = this.createAnonymousContext()

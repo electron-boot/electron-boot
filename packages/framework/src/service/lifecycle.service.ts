@@ -1,6 +1,6 @@
 import { Init, Singleton } from '../decorators/definitions.decorator'
-import type { ILogger } from '@electron-boot/logger'
-import { LoggerFactory } from '@electron-boot/logger'
+import type { LogFunctions } from 'electron-log'
+import Logger from 'electron-log'
 import { Autowired } from '../decorators/autowired.decorator'
 import type { IApplicationContext, ILifeCycle, IObjectLifeCycle } from '../interface'
 import { CONFIGURATION_KEY, listModule } from '../decorators/decorator.manager'
@@ -10,7 +10,7 @@ import { FunctionalConfiguration } from '../functional/configuration'
 
 @Singleton()
 export class LifecycleService {
-  private logger: ILogger = LoggerFactory.getLogger(LifecycleService)
+  private logger: LogFunctions = Logger.scope(LifecycleService.constructor.name)
 
   @Autowired()
   protected configService!: ConfigService

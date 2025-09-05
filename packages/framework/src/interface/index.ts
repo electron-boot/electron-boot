@@ -511,7 +511,7 @@ export interface EventInfo {
   /**
    * event name
    */
-  eventName: string
+  channel: string
   /**
    * handler name
    */

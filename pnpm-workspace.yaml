@@ -1,6 +1,8 @@
 packages:
   - 'packages/*'
   - 'example/*'
+catalog:
+  electron-log: ^5.4.3
 catalogs:
   electron30:
     electron: ^33.0.0

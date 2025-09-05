@@ -49,22 +49,22 @@ export class ControllerService {
           }
         }
 
-        let eventName = ''
+        let actionName = ''
         if (event.customName) {
-          eventName = event.customName
+          actionName = event.customName
         } else {
-          eventName = camel(event.propertyKey)
+          actionName = camel(event.propertyKey)
         }
 
-        eventName = [controllerName, eventName].join(':')
+        const channel = [controllerName, actionName].join(':')
         // 路由信息
         const data: EventInfo = {
           id,
-          eventName: `${eventName}`,
+          channel: `${channel}`,
           handlerName: `${controllerMetadata.controllerName}.${event.propertyKey}`,
           method: event.propertyKey
         }
-        this.checkDuplicateAndPush(data.eventName, data)
+        this.checkDuplicateAndPush(data.channel, data)
       }
     }
   }
