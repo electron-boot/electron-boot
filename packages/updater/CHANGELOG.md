@@ -1,5 +1,13 @@
 # @electron-boot/updater
 
+## 3.0.17
+
+### Patch Changes
+
+- 更新controller与ipc
+- Updated dependencies
+  - @electron-boot/framework@3.0.17
+
 ## 3.0.16
 
 ### Patch Changes

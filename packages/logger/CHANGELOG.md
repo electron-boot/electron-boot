@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 3.0.17
+
+### Patch Changes
+
+- 更新controller与ipc
+
 ## 3.0.16
 
 ### Patch Changes
