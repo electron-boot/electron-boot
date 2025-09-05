@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 3.0.18
+
+### Patch Changes
+
+- 处理没有打包的问题
+
 ## 3.0.17
 
 ### Patch Changes

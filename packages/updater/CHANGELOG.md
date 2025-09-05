@@ -1,5 +1,13 @@
 # @electron-boot/updater
 
+## 3.0.18
+
+### Patch Changes
+
+- 处理没有打包的问题
+- Updated dependencies
+  - @electron-boot/framework@3.0.18
+
 ## 3.0.17
 
 ### Patch Changes

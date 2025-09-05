@@ -1,6 +1,6 @@
 {
   "name": "@electron-boot/framework",
-  "version": "3.0.17",
+  "version": "3.0.18",
   "description": "fast development framework for electron",
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
