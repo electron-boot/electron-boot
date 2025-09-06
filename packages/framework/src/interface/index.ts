@@ -1,5 +1,4 @@
 import type { EventEmitter } from 'events'
-import type { LoggerFactoryConfig } from '@electron-boot/logger'
 import type { DecoratorManager } from '../decorators'
 
 declare global {
@@ -123,7 +122,6 @@ export interface IManagedInstance {
   value?: any
   args?: any
 }
-
 export interface ObjectDefinitionOptions {
   isAsync?: boolean
   initMethod?: string
@@ -428,7 +426,12 @@ export interface IConfig {
   /**
    * The logger config
    */
-  logger?: LoggerFactoryConfig
+  logger?: {
+    getSessions?: () => object[];
+    includeFutureSessions?: boolean;
+    preload?: string | boolean;
+    spyRendererConsole?: boolean;
+  }
 }
 
 export interface AppInfo {

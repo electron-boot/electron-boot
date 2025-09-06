@@ -9,12 +9,12 @@ import {
   listModule,
   SOCKET_KEY,
 } from "../decorators/decorator.manager";
-import type { ILogger } from "@electron-boot/logger";
-import { LoggerFactory } from "@electron-boot/logger";
+import type { LogFunctions } from "electron-log";
+import Logger from "electron-log";
 
 @Singleton()
 export class SocketService {
-  private logger: ILogger = LoggerFactory.getLogger(SocketService);
+  private logger: LogFunctions = Logger.scope(SocketService.constructor.name);
   @Autowired()
   aspectService!: AspectService;
 

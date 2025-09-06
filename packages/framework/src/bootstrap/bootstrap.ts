@@ -1,12 +1,12 @@
-import type { ILogger } from "@electron-boot/logger";
-import { LoggerFactory } from "@electron-boot/logger";
+import type { LogFunctions } from "electron-log";
+import Logger from "electron-log";
 import type { BootstrapOptions, IApplicationContext } from "../interface";
 import { Application } from "./application";
 
 export class Bootstrap {
   protected static application: Application | null;
   protected static configured = false;
-  protected static logger: ILogger = LoggerFactory.getLogger(Bootstrap);
+  protected static logger: LogFunctions = Logger.scope(Bootstrap.constructor.name);
   public static configure(options: BootstrapOptions = {}): typeof Bootstrap {
     this.configured = true;
     this.getApplication().configure(options);
@@ -80,7 +80,6 @@ export class Bootstrap {
       this.logger.error("close with error: ", err);
       process.exit(1);
     } finally {
-      LoggerFactory.destroy();
     }
   }
   /**

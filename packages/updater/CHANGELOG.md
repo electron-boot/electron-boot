@@ -1,5 +1,13 @@
 # @electron-boot/updater
 
+## 3.0.19
+
+### Patch Changes
+
+- 使用electron-log替换
+- Updated dependencies
+  - @electron-boot/framework@3.0.19
+
 ## 3.0.18
 
 ### Patch Changes

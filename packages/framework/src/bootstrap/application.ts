@@ -1,6 +1,6 @@
 import { inspect } from 'node:util'
-import type { ILogger } from '@electron-boot/logger'
-import { LoggerFactory } from '@electron-boot/logger'
+import type { LogFunctions } from 'electron-log'
+import Logger from 'electron-log'
 import type { BootstrapOptions, IApplicationContext } from '../interface'
 import { GenericApplicationContext } from '../context/generic.application.context'
 import { bindContainer, clearBindContainer, listPreloadModule } from '../decorators/decorator.manager'
@@ -17,7 +17,7 @@ import defaultConfig from '../config/config.default'
 let stepIdx = 1
 export class Application {
   protected globalOptions: Partial<BootstrapOptions> = {}
-  protected logger: ILogger = LoggerFactory.getLogger(Application)
+  protected logger: LogFunctions = Logger.scope(Application.constructor.name)
   private applicationContext: IApplicationContext | undefined
 
   private printStepDebugInfo(stepInfo: string) {

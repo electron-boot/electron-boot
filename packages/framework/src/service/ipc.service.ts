@@ -5,15 +5,15 @@ import { Socket } from '../decorators/socket.decorator'
 import { Autowired } from '../decorators/autowired.decorator'
 import type { ControllerService } from './controller.service'
 import { RequestApplicationContext } from '../context/request.application.context'
-import type { ILogger } from '@electron-boot/logger'
-import { LoggerFactory } from '@electron-boot/logger'
+import type { LogFunctions } from 'electron-log'
+import Logger from 'electron-log'
 
 @Socket()
 export class IpcService implements ISocket {
   // 默认的上下文
   private defaultContext = {}
   private _isEnable: boolean = true
-  private logger: ILogger = LoggerFactory.getLogger(IpcService)
+  private logger: LogFunctions = Logger.scope(IpcService.constructor.name)
   constructor(readonly applicationContext: IApplicationContext) {}
 
   @Autowired()

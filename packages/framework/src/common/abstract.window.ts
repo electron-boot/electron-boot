@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events'
 import type { BaseWindow,WebContentsView } from 'electron'
-import type { ILogger } from '@electron-boot/logger'
+import type { LogFunctions } from 'electron-log'
 
 
 export abstract class AbstractWindow extends EventEmitter {
-  protected logger: ILogger | null = null
+  protected logger: LogFunctions | null = null
   protected _win: BaseWindow | null = null
   protected _view: WebContentsView  | null = null
   get win(): BaseWindow | null {

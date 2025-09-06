@@ -1,5 +1,11 @@
 # @electron-boot/logger
 
+## 3.0.19
+
+### Patch Changes
+
+- 使用electron-log替换
+
 ## 3.0.18
 
 ### Patch Changes
